@@ -27,11 +27,15 @@
                 }}</a-select-option>
               </a-select>
            -->
-          <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list1Temp.length === 0" />
+          <a-empty
+            style="margin-top: 150px"
+            :image="simpleImage"
+            v-if="list1Temp.length === 0"
+          />
           <div v-if="list1Temp && list1Temp.length > 0" class="top-kuang">
-            <div>问卷名称</div>
+            <div style="flex: 1">问卷名称</div>
             <div>发送</div>
-            <div>回收</div>
+            <div style="margin-left: 30px">回收</div>
           </div>
           <div v-if="list1Temp && list1Temp.length > 0" class="list">
             <div
@@ -43,11 +47,24 @@
               @click="paperClick(item)"
             >
               <div class="name" :title="item.name">
-                <div style="width: 40%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
-                  {{ item.name }}
+                <div
+                  style="
+                    flex: 1;
+                    width: 40%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 2;
+                  "
+                >
+                  {{ item.name }}的股份而五个人完工后认为会让他让他
                 </div>
-                <div style="font-size: 12px;margin-left: 25px;">{{ item.spotAll }}</div>
-                <div style="font-size: 12px; margin-left: auto;">{{ item.spotOk }}</div>
+                <div style="font-size: 12px; margin-left: 25px">{{ item.spotAll }}</div>
+                <div style="font-size: 12px; margin-left: 30px; text-align: right">
+                  {{ item.spotOk }}
+                </div>
               </div>
 
               <div class="bottom-line"></div>
@@ -83,9 +100,12 @@
                 @search="onDepartmentSelectSearch"
               >
                 <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-                <a-select-option v-for="(item, index) in params1" :key="index" :value="item.department_id">{{
-                  item.department_name
-                }}</a-select-option>
+                <a-select-option
+                  v-for="(item, index) in params1"
+                  :key="index"
+                  :value="item.department_id"
+                  >{{ item.department_name }}</a-select-option
+                >
               </a-select>
             </div>
             <div class="search-row">
@@ -125,18 +145,36 @@
 
             <div class="search-row">
               <span class="name">执行时间:</span>
-              <a-range-picker style="width: 185px; height: 28px" :format="format" v-model="queryParam.times" />
+              <a-range-picker
+                style="width: 185px; height: 28px"
+                :format="format"
+                v-model="queryParam.times"
+              />
             </div>
             <div class="action-row">
               <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
                 <a-button type="primary" icon="search" @click="search()">查询</a-button>
-                <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="initQuerys()">重置</a-button>
-                <a-button icon="export" style="margin-left: 8px; margin-right: 0" @click="exportOut()">导出</a-button>
+                <a-button
+                  icon="undo"
+                  style="margin-left: 8px; margin-right: 0"
+                  @click="initQuerys()"
+                  >重置</a-button
+                >
+                <a-button
+                  icon="export"
+                  style="margin-left: 8px; margin-right: 0"
+                  @click="exportOut()"
+                  >导出</a-button
+                >
               </span>
             </div>
           </div>
           <div class="middle">
-            <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list2.length === 0" />
+            <a-empty
+              style="margin-top: 150px"
+              :image="simpleImage"
+              v-if="list2.length === 0"
+            />
             <div class="list" v-else>
               <div class="item" v-for="(item, index) in list2" :key="index">
                 <div class="title" :title="item.title">
@@ -144,12 +182,21 @@
                   <span class="name">{{ index + 1 }}.{{ item.title }}</span>
                 </div>
                 <table-form
-                  :queryParam="{ title: item.data[0].valueStr, keyStr: item.data[0].keyStr }"
+                  :queryParam="{
+                    title: item.data[0].valueStr,
+                    keyStr: item.data[0].keyStr,
+                  }"
                   v-if="item.type === 'INPUT'"
                 />
                 <div class="rows" v-else>
-                  <div class="row" v-for="(subItem, subIndex) in item.data" :key="index + '-' + subIndex">
-                    <div class="name" :title="subItem.valueStr">{{ subItem.valueStr }}</div>
+                  <div
+                    class="row"
+                    v-for="(subItem, subIndex) in item.data"
+                    :key="index + '-' + subIndex"
+                  >
+                    <div class="name" :title="subItem.valueStr">
+                      {{ subItem.valueStr }}
+                    </div>
                     <div class="percent">
                       <a-progress :percent="subItem.rate" status="active" />
                     </div>
@@ -164,7 +211,9 @@
               <div class="analyse analyse1">发放数：{{ overviewItem1.co || 0 }}</div>
               <div class="analyse analyse2">回收数：{{ overviewItem2.co || 0 }}</div>
               <div class="analyse analyse3">逾期数：{{ overviewItem3.co || 0 }}</div>
-              <div class="analyse analyse4">抽查合格率：{{ overviewItem4.co || '0%' }}</div>
+              <div class="analyse analyse4">
+                抽查合格率：{{ overviewItem4.co || "0%" }}
+              </div>
             </div>
             <div class="item2">
               <pies ref="pies" name="name" widths="100%" heights="180px"></pies>
@@ -180,14 +229,25 @@
 </template>
 
 <script>
-import { getDepts, getDeptsPersonal, getDepartmentListForSelect } from '@/api/modular/system/posManage'
-import { list1, list2, overview, pie, bar, exportFillQuestionnaireInfo } from '@/api/modular/system/paper'
-import { Ellipsis, Pies, Bars } from '@/components'
-import { TRUE_USER } from '@/store/mutation-types'
-import { Empty } from 'ant-design-vue'
-import tableForm from './tableForm'
-import moment from 'moment'
-import Vue from 'vue'
+import {
+  getDepts,
+  getDeptsPersonal,
+  getDepartmentListForSelect,
+} from "@/api/modular/system/posManage";
+import {
+  list1,
+  list2,
+  overview,
+  pie,
+  bar,
+  exportFillQuestionnaireInfo,
+} from "@/api/modular/system/paper";
+import { Ellipsis, Pies, Bars } from "@/components";
+import { TRUE_USER } from "@/store/mutation-types";
+import { Empty } from "ant-design-vue";
+import tableForm from "./tableForm";
+import moment from "moment";
+import Vue from "vue";
 export default {
   components: {
     Pies,
@@ -206,23 +266,23 @@ export default {
       queryParam: {
         times: [],
       },
-      paperName: '',
-      format: 'YYYY-MM-DD',
+      paperName: "",
+      format: "YYYY-MM-DD",
       currentPaper: {},
       user: {},
       params1: [],
       params2: [
         {
           id: 1,
-          name: '电话',
+          name: "电话",
         },
         {
           id: 2,
-          name: '微信',
+          name: "微信",
         },
         {
           id: 3,
-          name: '短信',
+          name: "短信",
         },
       ],
       list1: [],
@@ -231,141 +291,141 @@ export default {
       overview: [],
       pie: [],
       bar: [],
-    }
+    };
   },
   computed: {
     overviewItem1() {
       const result =
         this.overview.find((item) => {
-          return item.item === '发放数'
-        }) || {}
-      return result
+          return item.item === "发放数";
+        }) || {};
+      return result;
     },
     overviewItem2() {
       const result =
         this.overview.find((item) => {
-          return item.item === '回收数'
-        }) || {}
-      return result
+          return item.item === "回收数";
+        }) || {};
+      return result;
     },
     overviewItem3() {
       const result =
         this.overview.find((item) => {
-          return item.item === '逾期数'
-        }) || {}
-      return result
+          return item.item === "逾期数";
+        }) || {};
+      return result;
     },
     overviewItem4() {
       const result =
         this.overview.find((item) => {
-          return item.item === '抽查合格率'
-        }) || {}
-      return result
+          return item.item === "抽查合格率";
+        }) || {};
+      return result;
     },
   },
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.user = Vue.ls.get(TRUE_USER)
+    this.user = Vue.ls.get(TRUE_USER);
     // this.getParams1()
-    this.getDepartmentSelectList(undefined)
+    this.getDepartmentSelectList(undefined);
   },
   mounted() {
-    this.init()
+    this.init();
   },
   methods: {
     init() {
-      this.getList1()
-      this.initEvent()
-      this.initQuerys()
+      this.getList1();
+      this.initEvent();
+      this.initQuerys();
     },
     initPies(data) {
-      const option = this.genePiesOption(data)
-      this.$refs.pies.init2(option)
+      const option = this.genePiesOption(data);
+      this.$refs.pies.init2(option);
     },
     initBars(data) {
-      const option = this.geneBarsOption(data)
-      this.$refs.bars.init(option)
+      const option = this.geneBarsOption(data);
+      this.$refs.bars.init(option);
     },
     initEvent() {
-      window.addEventListener('resize', (e) => {
-        this.resizeCharts()
-      })
+      window.addEventListener("resize", (e) => {
+        this.resizeCharts();
+      });
     },
     resizeCharts() {
-      this.$refs.pies.getChart().resize()
-      this.$refs.bars.getChart().resize()
+      this.$refs.pies.getChart().resize();
+      this.$refs.bars.getChart().resize();
     },
     search() {
-      this.getList2()
-      this.getOverview()
-      this.getPie()
-      this.getBar()
+      this.getList2();
+      this.getOverview();
+      this.getPie();
+      this.getBar();
     },
     initQuerys() {
       this.queryParam = {
-        times: [moment().startOf('month'), moment().endOf('month')],
-      }
+        times: [moment().startOf("month"), moment().endOf("month")],
+      };
     },
-    getQuerys(key = 'id') {
+    getQuerys(key = "id") {
       const query = {
         messageOriginalId: this.currentPaper[key],
         messageType: this.queryParam.messageType,
         executeDepartmentId: this.queryParam.executeDepartmentId,
-      }
+      };
       if (this.queryParam.times && this.queryParam.times.length > 0) {
-        query.executeTimeStart = this.queryParam.times[0].format(this.format)
-        query.executeTimeEnd = this.queryParam.times[1].format(this.format)
+        query.executeTimeStart = this.queryParam.times[0].format(this.format);
+        query.executeTimeEnd = this.queryParam.times[1].format(this.format);
       }
-      return query
+      return query;
     },
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
-      this.fetching = true
+      this.fetching = true;
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
-        this.fetching = false
+      getDepartmentListForSelect(departmentName, "managerDept").then((res) => {
+        this.fetching = false;
         if (res.code == 0) {
-          this.params1 = res.data.records
+          this.params1 = res.data.records;
         }
-      })
+      });
     },
     //科室搜索
     onDepartmentSelectSearch(value) {
-      this.params1 = []
-      this.getDepartmentSelectList(value)
+      this.params1 = [];
+      this.getDepartmentSelectList(value);
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
       if (value === undefined) {
-        this.params1 = []
-        this.getDepartmentSelectList(undefined)
+        this.params1 = [];
+        this.getDepartmentSelectList(undefined);
       }
     },
 
     change(row) {
       //触发清空
-      if ((row.gettype = 'click' && row.isTrusted)) {
-        this.list1Temp = this.list1
+      if ((row.gettype = "click" && row.isTrusted)) {
+        this.list1Temp = this.list1;
       }
     },
 
     onselectQuestion(value) {
-      console.log('KKKK:', value.target._value)
-      var arrTemp = []
+      console.log("KKKK:", value.target._value);
+      var arrTemp = [];
       if (this.list1 && this.list1.length > 0) {
         for (let index = 0; index < this.list1.length; index++) {
           if (this.list1[index].name.indexOf(value.target._value) >= 0) {
-            arrTemp.push(this.list1[index])
+            arrTemp.push(this.list1[index]);
           }
         }
         // console.log('FFFF:', arrTemp)
         if (arrTemp && arrTemp.length > 0) {
-          this.list1Temp = []
-          this.list1Temp = arrTemp
+          this.list1Temp = [];
+          this.list1Temp = arrTemp;
         } else {
-          this.list1Temp = this.list1
+          this.list1Temp = this.list1;
         }
       }
 
@@ -380,171 +440,173 @@ export default {
 
     getParams1() {
       //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-      if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+      if (this.user.roleId == 7 || this.user.roleName == "admin") {
         getDepts().then((res) => {
           if (res.code == 0) {
-            this.params1 = res.data || []
+            this.params1 = res.data || [];
           }
-        })
+        });
       } else {
         getDeptsPersonal().then((res) => {
           if (res.code == 0) {
-            this.params1 = res.data || []
+            this.params1 = res.data || [];
           }
-        })
+        });
       }
     },
     getList1(name) {
-      this.confirmLoading_left = true
+      this.confirmLoading_left = true;
       list1({
         questionnaireName: name || undefined,
       })
         .then((res) => {
           if (res.code === 0) {
-            this.list1 = res.data || []
-            this.list1Temp = JSON.parse(JSON.stringify(this.list1))
+            this.list1 = res.data || [];
+            this.list1Temp = JSON.parse(JSON.stringify(this.list1));
             if (this.list1.length > 0) {
-              this.paperClick(this.list1[0])
+              this.paperClick(this.list1[0]);
             }
           } else {
-            this.$message.error(res.message)
+            this.$message.error(res.message);
           }
         })
         .finally(() => {
-          this.confirmLoading_left = false
-        })
+          this.confirmLoading_left = false;
+        });
     },
     getList2() {
-      this.list2 = []
-      this.confirmLoading_right = true
-      list2(this.getQuerys('key'))
+      this.list2 = [];
+      this.confirmLoading_right = true;
+      list2(this.getQuerys("key"))
         .then((res) => {
           if (res.code === 0) {
-            this.list2 = res.data || []
+            this.list2 = res.data || [];
           } else {
-            this.$message.error(res.message)
+            this.$message.error(res.message);
           }
         })
         .finally(() => {
-          this.confirmLoading_right = false
-        })
+          this.confirmLoading_right = false;
+        });
     },
     getOverview() {
       overview(this.getQuerys()).then((res) => {
         if (res.code === 0) {
-          this.overview = res.data || []
+          this.overview = res.data || [];
         } else {
-          this.$message.error(res.message)
+          this.$message.error(res.message);
         }
-      })
+      });
     },
     getPie() {
       pie(this.getQuerys()).then((res) => {
         if (res.code === 0) {
-          this.pie = res.data || []
-          this.initPies(this.pie)
+          this.pie = res.data || [];
+          this.initPies(this.pie);
         } else {
-          this.$message.error(res.message)
+          this.$message.error(res.message);
         }
-      })
+      });
     },
     getBar() {
       bar(this.getQuerys()).then((res) => {
         if (res.code === 0) {
-          this.bar = res.data || []
-          this.initBars(this.bar)
+          this.bar = res.data || [];
+          this.initBars(this.bar);
         } else {
-          this.$message.error(res.message)
+          this.$message.error(res.message);
         }
-      })
+      });
     },
 
     //导出
     exportOut() {
-      var reqdata = this.getQuerys('key')
+      var reqdata = this.getQuerys("key");
       if (!reqdata.executeTimeStart || !reqdata.executeTimeEnd) {
-        this.$message.info('请选择时间')
-        return
+        this.$message.info("请选择时间");
+        return;
       }
 
       exportFillQuestionnaireInfo(reqdata)
         .then((res) => {
-          this.downloadfile(res)
+          this.downloadfile(res);
         })
         .catch((err) => {
-          this.$message.error('导出错误：' + err.message)
-        })
+          this.$message.error("导出错误：" + err.message);
+        });
     },
     downloadfile(res) {
-      var blob = new Blob([res.data], { type: 'application/octet-stream; charset=UTF-8' })
-      var contentDisposition = res.headers['content-disposition']
-      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
-      var result = patt.exec(contentDisposition)
+      var blob = new Blob([res.data], {
+        type: "application/octet-stream; charset=UTF-8",
+      });
+      var contentDisposition = res.headers["content-disposition"];
+      var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*");
+      var result = patt.exec(contentDisposition);
       if (result) {
-        var filename = result[1]
-        var downloadElement = document.createElement('a')
-        var href = window.URL.createObjectURL(blob) // 创建下载的链接
-        var reg = /^["](.*)["]$/g
-        downloadElement.style.display = 'none'
-        downloadElement.href = href
-        downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
-        document.body.appendChild(downloadElement)
-        downloadElement.click() // 点击下载
-        document.body.removeChild(downloadElement) // 下载完成移除元素
-        window.URL.revokeObjectURL(href)
+        var filename = result[1];
+        var downloadElement = document.createElement("a");
+        var href = window.URL.createObjectURL(blob); // 创建下载的链接
+        var reg = /^["](.*)["]$/g;
+        downloadElement.style.display = "none";
+        downloadElement.href = href;
+        downloadElement.download = decodeURI(filename.replace(reg, "$1")); // 下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        window.URL.revokeObjectURL(href);
       }
     },
     paperClick(paper) {
-      this.currentPaper = paper
-      this.initQuerys()
-      this.search()
+      this.currentPaper = paper;
+      this.initQuerys();
+      this.search();
     },
     onChange(event) {
-      this.getList1(this.paperName)
+      this.getList1(this.paperName);
     },
     genePiesOption(data) {
       const option = {
-        color: ['#5087EC', '#68BBC4', '#58A55C'],
+        color: ["#5087EC", "#68BBC4", "#58A55C"],
         title: {
-          text: '随访方式分布',
-          left: 'center',
+          text: "随访方式分布",
+          left: "center",
           textStyle: {
             fontSize: 14,
             lineHeight: 16,
-            color: '#4D4D4D',
-            fontWeight: '400',
+            color: "#4D4D4D",
+            fontWeight: "400",
           },
         },
         tooltip: {
-          trigger: 'item',
+          trigger: "item",
         },
         legend: {
-          top: '30%',
-          left: 'right',
-          orient: 'vertical',
+          top: "30%",
+          left: "right",
+          orient: "vertical",
         },
         series: [
           {
-            name: '随访方式分布',
-            type: 'pie',
-            center: ['40%', '55%'],
-            radius: ['35%', '55%'],
+            name: "随访方式分布",
+            type: "pie",
+            center: ["40%", "55%"],
+            radius: ["35%", "55%"],
             avoidLabelOverlap: false,
             data: data.map((item) => {
               return {
                 name: item.messageType,
                 value: item.co,
-              }
+              };
             }),
             label: {
               show: true,
-              position: 'outside',
+              position: "outside",
               fontSize: 12,
               lineHeight: 16,
-              color: '#4D4D4D',
-              textAlign: 'left',
+              color: "#4D4D4D",
+              textAlign: "left",
               formatter(item) {
-                return item.name + ' ' + item.value
+                return item.name + " " + item.value;
               },
             },
             labelLine: {
@@ -554,77 +616,77 @@ export default {
               label: {
                 show: true,
                 fontSize: 12,
-                fontWeight: 'bold',
+                fontWeight: "bold",
               },
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
+                shadowColor: "rgba(0, 0, 0, 0.5)",
               },
             },
           },
         ],
-      }
-      return option
+      };
+      return option;
     },
     geneBarsOption(data) {
       const option = {
-        color: ['#409EFF'],
+        color: ["#409EFF"],
         title: {
-          text: '失败原因Top5',
-          left: 'center',
+          text: "失败原因Top5",
+          left: "center",
           textStyle: {
             fontSize: 14,
             lineHeight: 16,
-            color: '#4D4D4D',
-            fontWeight: '400',
+            color: "#4D4D4D",
+            fontWeight: "400",
           },
         },
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
-            type: 'shadow',
+            type: "shadow",
           },
         },
         legend: {},
         grid: {
-          top: '25px',
-          left: '5px',
-          right: '20px',
-          bottom: '10px',
+          top: "25px",
+          left: "5px",
+          right: "20px",
+          bottom: "10px",
           containLabel: true,
         },
         xAxis: {
-          type: 'value',
+          type: "value",
           axisLabel: {
-            color: '#4D4D4D',
+            color: "#4D4D4D",
             fontSize: 12,
           },
         },
         yAxis: {
-          type: 'category',
+          type: "category",
           axisLabel: {
-            color: '#4D4D4D',
+            color: "#4D4D4D",
             fontSize: 12,
           },
           data: data.map((item) => {
-            return item.failReason
+            return item.failReason;
           }),
         },
         series: [
           {
-            type: 'bar',
-            barWidth: '50%',
+            type: "bar",
+            barWidth: "50%",
             data: data.map((item) => {
-              return item.co
+              return item.co;
             }),
           },
         ],
-      }
-      return option
+      };
+      return option;
     },
   },
-}
+};
 </script>
 
 <style lang="less">
@@ -681,6 +743,9 @@ button {
     width: 250px;
     height: 100%;
     height: calc(100vh - 151px);
+    // border: 1px #e6e6e6 solid;
+    // padding: 20px;
+
     // border: 1px solid #e6e6e6;
     .search {
       padding: 0px 14px;
@@ -696,7 +761,7 @@ button {
       color: #1a1a1a;
       flex-direction: row !important;
       width: 95%;
-      justify-content: space-between;
+      // justify-content: space-between;
       border-bottom: #e6e6e6 1px solid;
       border: 1px solid #dfe3e5;
     }
@@ -711,7 +776,7 @@ button {
         width: 210px;
         height: 0.5px;
         background: #e6e6e6;
-        margin-top: 5px;
+        margin-top: 10px;
         margin-bottom: 5px;
       }
 
@@ -729,7 +794,8 @@ button {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        height: 40px;
+        // height: 40px;
+        padding: 10px 0 0 0;
         font-size: 12px;
         align-items: center;
         cursor: pointer;
@@ -749,9 +815,9 @@ button {
           // overflow: hidden;
           // text-overflow: ellipsis;
           height: 85%;
-          overflow: hidden; //溢出隐藏
-          text-overflow: ellipsis; //超出省略号显示
-          white-space: nowrap; //文字不换行
+          // overflow: hidden; //溢出隐藏
+          // text-overflow: ellipsis; //超出省略号显示
+          // white-space: nowrap; //文字不换行
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
@@ -759,7 +825,7 @@ button {
           align-items: center;
           justify-content: space-between;
           font-size: 12px;
-          text-align: left|center;
+          text-align: left;
         }
         .icon {
           display: none;
