@@ -9,7 +9,7 @@
             @keyup.enter="onselectQuestion"
             @search="onselectQuestion"
             @change="change"
-            style="width: 210px; margin-left: 12px; margin-bottom: 20px"
+            style="width: 210px;  margin-bottom: 20px"
           />
           <!-- <a-select
                 style="width: 180px;margin-left: 12px;margin-bottom: 20px;"
@@ -35,7 +35,7 @@
           <div v-if="list1Temp && list1Temp.length > 0" class="top-kuang">
             <div style="flex: 1">问卷名称</div>
             <div>发送</div>
-            <div style="margin-left: 30px">回收</div>
+            <div style="margin-left: 20px">回收</div>
           </div>
           <div v-if="list1Temp && list1Temp.length > 0" class="list">
             <div
@@ -59,7 +59,7 @@
                     -webkit-line-clamp: 2;
                   "
                 >
-                  {{ item.name }}的股份而五个人完工后认为会让他让他
+                  {{ item.name }}
                 </div>
                 <div style="font-size: 12px; margin-left: 25px">{{ item.spotAll }}</div>
                 <div style="font-size: 12px; margin-left: 30px; text-align: right">
@@ -215,12 +215,42 @@
                 抽查合格率：{{ overviewItem4.co || "0%" }}
               </div>
             </div>
-            <div class="item2">
+            <div
+              v-if="pie.length == 0"
+              class="item2"
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <div style="margin-top: 5px; font-size: 13px">随访方式分布</div>
+
+              <div class="no-data">
+                <img src="~@/assets/icons/no_data.jpg" />
+                <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+              </div>
+            </div>
+            <div v-else class="item2">
+              <pies ref="pies" name="name" widths="100%" heights="180px"></pies>
+            </div>
+            <div
+              v-if="bar.length == 0"
+              class="item3"
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <div style="margin-top: 5px; font-size: 13px">失败原因Top5</div>
+              <div class="no-data">
+                <img src="~@/assets/icons/no_data.jpg" />
+                <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+              </div>
+            </div>
+            <div v-else class="item3">
+              <bars ref="bars" name="name" widths="100%" heights="180px"></bars>
+            </div>
+
+            <!-- <div class="item2">
               <pies ref="pies" name="name" widths="100%" heights="180px"></pies>
             </div>
             <div class="item3">
               <bars ref="bars" name="name" widths="100%" heights="180px"></bars>
-            </div>
+            </div> -->
           </div>
         </a-spin>
       </div>
@@ -738,12 +768,16 @@ button {
 .wrap {
   display: flex;
   height: 100%;
+  box-sizing: border-box;
   justify-content: space-between;
   .left {
-    width: 250px;
-    height: 100%;
-    height: calc(100vh - 151px);
-    // border: 1px #e6e6e6 solid;
+    // height: calc(100vh - 151px);
+    border: 1px #e6e6e6 solid;
+    box-sizing: border-box;
+    width: 290px;
+    padding: 20px 20px 10px;
+    overflow-y: auto;
+
     // padding: 20px;
 
     // border: 1px solid #e6e6e6;
@@ -760,7 +794,7 @@ button {
       background-color: #f2f2f2;
       color: #1a1a1a;
       flex-direction: row !important;
-      width: 95%;
+      width: 250px;
       // justify-content: space-between;
       border-bottom: #e6e6e6 1px solid;
       border: 1px solid #dfe3e5;
@@ -769,7 +803,8 @@ button {
     .list {
       height: calc(100% - 0px);
       padding: 0px 14px;
-      overflow-y: auto;
+      // overflow-y: auto;
+      height: 60vh;
       width: 238px;
 
       .bottom-line {
@@ -837,9 +872,23 @@ button {
     }
   }
   .right {
-    margin-top: -10px;
+    // margin-top: -10px;
     flex: 1;
+    margin-left: 20px;
+    box-sizing: border-box;
     padding-left: 14px;
+    box-sizing: border-box;
+    padding: 10px 20px 18px 20px;
+    border: 1px solid #e6e6e6;
+    .no-data {
+      // height: 300px;
+      margin-top: 27px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
     .top {
       padding-bottom: 15px;
       border-bottom: none;
@@ -847,6 +896,7 @@ button {
     .middle {
       height: calc(100vh - 390px);
       margin-bottom: 14px;
+      margin-top: 5px;
       border: 1px solid #d7d9de;
       .list {
         height: 100%;
