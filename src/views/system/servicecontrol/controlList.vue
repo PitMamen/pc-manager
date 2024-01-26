@@ -967,7 +967,6 @@ export default {
 .div-service-control {
   width: 100%;
   overflow: hidden;
-  padding-top: 20px;
   height: calc(100vh - 90px);
 
   .div-radio {

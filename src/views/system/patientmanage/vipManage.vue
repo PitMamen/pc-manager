@@ -1,6 +1,6 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs :activeKey="0" v-model="keyindex" @change="chanage" style="margin-top: -20px">
+    <a-tabs v-model="keyindex" @change="chanage" style="margin-top: -20px">
       <a-tab-pane
         class="ant-tabs-tab-active"
         v-for="(itemTab, indexTab) in tabDatas"
@@ -362,7 +362,7 @@ export default {
     qryMetaConfigure(requestDataCon).then((res) => {
       if (res.code == 0) {
         if (res.data.rows) {
-          this.keyindex = res.data.rows[0].databaseTableName
+          this.keyindex = res.data.rows[0].id
           this.tabDatas = res.data.rows
           this.tableName = res.data.rows[0].databaseTableName
           this.tableId = res.data.rows[0].id

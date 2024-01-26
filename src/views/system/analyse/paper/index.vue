@@ -167,10 +167,18 @@
               <div class="analyse analyse4">抽查合格率：{{ overviewItem4.co || '0%' }}</div>
             </div>
             <div class="item2">
-              <pies ref="pies" name="name" widths="100%" heights="180px"></pies>
+              <div v-if="pie.length === 0">
+                <div style="margin-top: 10px; font-size: 14px; color: #4D4D4D; text-align: center;">随访方式分布</div>
+                <a-empty style="margin-top: 20px" :image="simpleImage" />
+              </div>
+              <pies ref="pies" name="name" widths="100%" heights="180px" v-else></pies>
             </div>
             <div class="item3">
-              <bars ref="bars" name="name" widths="100%" heights="180px"></bars>
+              <div v-if="bar.length === 0">
+                <div style="margin-top: 10px; font-size: 14px; color: #4D4D4D; text-align: center;">失败原因Top5</div>
+                <a-empty style="margin-top: 20px" :image="simpleImage" />
+              </div>
+              <bars ref="bars" name="name" widths="100%" heights="180px" v-else></bars>
             </div>
           </div>
         </a-spin>
@@ -281,12 +289,20 @@ export default {
       this.initQuerys()
     },
     initPies(data) {
-      const option = this.genePiesOption(data)
-      this.$refs.pies.init2(option)
+      if (data.length > 0){
+        setTimeout(() => {
+          const option = this.genePiesOption(data)
+          this.$refs.pies.init2(option)
+        })
+      }
     },
     initBars(data) {
-      const option = this.geneBarsOption(data)
-      this.$refs.bars.init(option)
+      if (data.length > 0){
+        setTimeout(() => {
+          const option = this.geneBarsOption(data)
+          this.$refs.bars.init(option)
+        })
+      }
     },
     initEvent() {
       window.addEventListener('resize', (e) => {
@@ -294,8 +310,12 @@ export default {
       })
     },
     resizeCharts() {
-      this.$refs.pies.getChart().resize()
-      this.$refs.bars.getChart().resize()
+      if (this.pie.length > 0){
+        this.$refs.pies.getChart().resize()
+      }
+      if (this.bar.length > 0){
+        this.$refs.bars.getChart().resize()
+      }
     },
     search() {
       this.getList2()

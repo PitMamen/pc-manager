@@ -1140,7 +1140,6 @@ export default {
   }
   .div-radio {
     font-size: 12px;
-    margin: 20px 20px 0 20px;
     display: flex;
     align-items: center;
     flex-direction: row;
