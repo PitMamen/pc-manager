@@ -88,7 +88,7 @@
     >
       <!-- 复诊续方 -->
       <span slot="fzxfaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap">
           <a-popconfirm
             v-if="record.fuzhen"
             :title="record.fuzhen && record.fuzhen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -97,13 +97,13 @@
           >
             <a-switch
               v-if="record.fuzhen"
-              :disabled="!record.fuzhen||record.userType == 'nurse'"
+              :disabled="!record.fuzhen || record.userType == 'nurse'"
               size="small"
               :checked="record.fuzhen ? record.fuzhen.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
-          <div v-if="!record.fuzhen" class="tuoyuan" @click="showMessage(record,1)">
+          <div v-if="!record.fuzhen" class="tuoyuan" @click="showMessage(record, 1)">
             <div class="yuan"></div>
           </div>
 
@@ -112,14 +112,20 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.fuzhen" @click="showMessage(record,1)" style="margin-left: 5px; color: #4d4d4d">配置</a>
-          <a :disabled="record.userType == 'nurse'" v-if="record.fuzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 1)">配置</a>
+          <a v-if="!record.fuzhen" @click="showMessage(record, 1)" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a
+            :disabled="record.userType == 'nurse'"
+            v-if="record.fuzhen"
+            style="margin-left: 5px"
+            @click="$refs.fzmzConfig.editmodal(record, 1)"
+            >配置</a
+          >
         </div>
       </span>
 
       <!-- 图文咨询 -->
       <span slot="twzxaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap">
           <a-popconfirm
             v-if="record.tuwen"
             :title="record.tuwen && record.tuwen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -134,7 +140,7 @@
             />
           </a-popconfirm>
 
-          <div v-if="!record.tuwen" class="tuoyuan" @click="showMessage(record,2)">
+          <div v-if="!record.tuwen" class="tuoyuan" @click="showMessage(record, 2)">
             <div class="yuan"></div>
           </div>
 
@@ -143,14 +149,14 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.tuwen" @click="showMessage(record,2)" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="!record.tuwen" @click="showMessage(record, 2)" style="margin-left: 5px; color: #4d4d4d">配置</a>
           <a v-if="record.tuwen" style="margin-left: 5px" @click="$refs.tuWenConfig.editmodal(record)">配置</a>
         </div>
       </span>
 
       <!-- 电话咨询 -->
       <span slot="dhzxaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap">
           <a-popconfirm
             v-if="record.dianhua"
             :title="record.dianhua && record.dianhua.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -165,7 +171,7 @@
             />
           </a-popconfirm>
 
-          <div v-if="!record.dianhua" class="tuoyuan" @click="showMessage(record,3)">
+          <div v-if="!record.dianhua" class="tuoyuan" @click="showMessage(record, 3)">
             <div class="yuan"></div>
           </div>
 
@@ -174,14 +180,20 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.dianhua" @click="showMessage(record,3)" style="margin-left: 5px; color: #4d4d4d">配置</a>
-          <a :disabled="record.userType == 'nurse'" v-if="record.dianhua" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record, 1)">配置</a>
+          <a v-if="!record.dianhua" @click="showMessage(record, 3)" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a
+            :disabled="record.userType == 'nurse'"
+            v-if="record.dianhua"
+            style="margin-left: 5px"
+            @click="$refs.phoneConfig.editmodal(record, 1)"
+            >配置</a
+          >
         </div>
       </span>
 
       <!-- 视频咨询 -->
       <span slot="spzxaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap">
           <a-popconfirm
             v-if="record.shipin"
             :title="record.shipin && record.shipin.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -190,13 +202,13 @@
           >
             <a-switch
               v-if="record.shipin"
-              :disabled="!record.shipin||record.userType == 'nurse'"
+              :disabled="!record.shipin || record.userType == 'nurse'"
               size="small"
               :checked="record.shipin ? record.shipin.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
-          <div v-if="!record.shipin" class="tuoyuan" @click="showMessage(record,4)">
+          <div v-if="!record.shipin" class="tuoyuan" @click="showMessage(record, 4)">
             <div class="yuan"></div>
           </div>
 
@@ -205,14 +217,20 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.shipin" @click="showMessage(record,4)" style="margin-left: 5px; color: #4d4d4d">配置</a>
-          <a :disabled="record.userType == 'nurse'"  v-if="record.shipin" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record, 2)">配置</a>
+          <a v-if="!record.shipin" @click="showMessage(record, 4)" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a
+            :disabled="record.userType == 'nurse'"
+            v-if="record.shipin"
+            style="margin-left: 5px"
+            @click="$refs.phoneConfig.editmodal(record, 2)"
+            >配置</a
+          >
         </div>
       </span>
 
       <!-- 门诊随诊 -->
       <span slot="mzszaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap">
           <a-popconfirm
             v-if="record.menzhen"
             :title="record.menzhen && record.menzhen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -221,13 +239,13 @@
           >
             <a-switch
               v-if="record.menzhen"
-              :disabled="!record.menzhen||record.userType == 'nurse'"
+              :disabled="!record.menzhen || record.userType == 'nurse'"
               size="small"
               :checked="record.menzhen ? record.menzhen.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
-          <div v-if="!record.menzhen" class="tuoyuan" @click="showMessage(record,5)">
+          <div v-if="!record.menzhen" class="tuoyuan" @click="showMessage(record, 5)">
             <div class="yuan"></div>
           </div>
 
@@ -236,14 +254,20 @@
           ></div>
 
           <a-icon type="setting" style="margin-top: 3px" />
-          <a v-if="!record.menzhen" @click="showMessage(record,5)" style="margin-left: 5px; color: #4d4d4d">配置</a>
-          <a  :disabled="record.userType == 'nurse'"  v-if="record.menzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 2)">配置</a>
+          <a v-if="!record.menzhen" @click="showMessage(record, 5)" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a
+            :disabled="record.userType == 'nurse'"
+            v-if="record.menzhen"
+            style="margin-left: 5px"
+            @click="$refs.fzmzConfig.editmodal(record, 2)"
+            >配置</a
+          >
         </div>
       </span>
 
       <!-- 特需心理咨询 -->
       <span slot="txzxaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap">
           <a-popconfirm
             v-if="record.texu"
             :title="record.texu && record.texu.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -258,7 +282,7 @@
             />
           </a-popconfirm>
 
-          <div v-if="!record.texu" class="tuoyuan" @click="showMessage(record,6)">
+          <div v-if="!record.texu" class="tuoyuan" @click="showMessage(record, 6)">
             <div class="yuan"></div>
           </div>
 
@@ -267,8 +291,39 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.texu" @click="showMessage(record,6)" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="!record.texu" @click="showMessage(record, 6)" style="margin-left: 5px; color: #4d4d4d">配置</a>
           <a v-if="record.texu" style="margin-left: 5px" @click="$refs.texuConfig.editmodal(record, 3)">配置</a>
+        </div>
+      </span>
+
+      <!-- 康复随访 -->
+      <span slot="twzxaction" slot-scope="text, record">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap">
+          <a-popconfirm
+            v-if="record.tuwen"
+            :title="record.tuwen && record.tuwen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
+            placement="topRight"
+            @confirm="updatePkgStatusOut(record, 'kfsf')"
+          >
+            <a-switch
+              v-if="record.tuwen"
+              :disabled="!record.tuwen"
+              size="small"
+              :checked="record.tuwen ? record.tuwen.stopStatus == 2 : false"
+            />
+          </a-popconfirm>
+
+          <div v-if="!record.tuwen" class="tuoyuan" @click="showMessage(record, 2)">
+            <div class="yuan"></div>
+          </div>
+
+          <div
+            style="width: 2px; height: 13px; background: #4d4d4d; margin-left: 5px; margin-right: 5px; margin-top: 2px"
+          ></div>
+
+          <a-icon type="setting" />
+          <a v-if="!record.tuwen" @click="showMessage(record, 2)" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="record.tuwen" style="margin-left: 5px" @click="$refs.kfsfConfig.kfsfmodal(record)">配置</a>
         </div>
       </span>
     </s-table>
@@ -277,6 +332,7 @@
     <fzmz-Config ref="fzmzConfig" @ok="handleOk" />
     <tuWen-Config ref="tuWenConfig" @ok="handleOk" />
     <phone-Config ref="phoneConfig" @ok="handleOk" />
+    <kfsf-Config ref="kfsfConfig" @ok="handleOk" />
   </a-card>
 </template>
     
@@ -294,6 +350,7 @@ import texuConfig from './texuConfig.vue'
 import fzmzConfig from './fzmzConfig.vue'
 import tuWenConfig from './tuWenConfig.vue'
 import phoneConfig from './phoneConfig.vue'
+import kfsfConfig from './kfsfConfig.vue'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -303,6 +360,7 @@ export default {
     fzmzConfig,
     tuWenConfig,
     phoneConfig,
+    kfsfConfig,
   },
   data() {
     return {
@@ -402,6 +460,13 @@ export default {
           scopedSlots: { customRender: 'mzszaction' },
           align: 'center',
         },
+
+        {
+          title: '康复随访',
+          dataIndex: 'twzxaction',
+          scopedSlots: { customRender: 'twzxaction' },
+          align: 'center',
+        },
       ],
 
       // 加载数据方法 必须为 Promise 对象
@@ -458,20 +523,18 @@ export default {
     this.queryHospitalListOut(undefined) //所属机构
   },
   methods: {
-    showMessage(record,type) {
+    showMessage(record, type) {
       // console.log("dddd:",record)
       if (record.userType != 'nurse') {
         this.$message.error('请先初始化!')
-      }else{
-        if (type==2&&!record.tuwen) {
+      } else {
+        if (type == 2 && !record.tuwen) {
           this.$message.error('请先初始化!')
         }
-        if (type==6) {
+        if (type == 6) {
           this.$message.error('请先初始化!')
         }
       }
-
-    
     },
 
     /**
@@ -523,6 +586,13 @@ export default {
         }
         record.menzhen.stopStatus = record.menzhen.stopStatus == 2 ? 1 : 2
       } else if (type == 'texu') {
+        data = {
+          id: record.texu.commodityId,
+          statusValue: record.texu.stopStatus == 2 ? 1 : 2,
+          updateType: 2,
+        }
+        record.texu.stopStatus = record.texu.stopStatus == 2 ? 1 : 2
+      }else if (type == 'kfsf') {
         data = {
           id: record.texu.commodityId,
           statusValue: record.texu.stopStatus == 2 ? 1 : 2,
@@ -582,7 +652,6 @@ export default {
     //     })
     // },
 
-
     queryHospitalListOut(name) {
       this.fetching = true
       let queryData = {
@@ -621,15 +690,6 @@ export default {
         this.queryHospitalListOut(undefined)
       }
     },
-
-
-
-
-
-
-
-
-
 
     selectHospital(code) {
       console.log('DDDD:', code)

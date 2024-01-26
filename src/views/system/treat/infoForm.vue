@@ -94,7 +94,9 @@
             </div>
             <div class="infos">
               <div class="row">
-                <div class="item" v-if="item.orderType == 'psychologyRegister'">服务医生/咨询师：{{ tab1Info.doctorUserName || '--' }}</div>
+                <div class="item" v-if="item.orderType == 'psychologyRegister'">
+                  服务医生/咨询师：{{ tab1Info.doctorUserName || '--' }}
+                </div>
                 <div class="item" v-else>服务医生：{{ tab1Info.doctorUserName || '--' }}</div>
                 <div v-if="jumpType != 6" class="item">服务护士：{{ tab1Info.nurseUserName || '--' }}</div>
                 <div v-if="jumpType != 6" class="item" :title="tab1Info.teamName || '--'">
@@ -198,7 +200,7 @@
             </div>
 
             <div class="recordType">
-              <div :class="{ 'checked-btn': currentTab == 'tw' }" @click="checketab('tw')">
+              <div v-if="showtwTab" :class="{ 'checked-btn': currentTab == 'tw' }" @click="checketab('tw')">
                 <span>图文咨询记录</span>
               </div>
               <div
@@ -208,6 +210,15 @@
                 @click="checketab('dh')"
               >
                 <span>电话咨询记录</span>
+              </div>
+
+              <div
+                v-if="showspTab"
+                :class="{ 'checked-btn': currentTab == 'sp' }"
+                style="margin-left: 15px"
+                @click="checketab('sp')"
+              >
+                <span>视频咨询记录</span>
               </div>
             </div>
 
@@ -536,8 +547,12 @@
             </div>
           </div>
 
-          <div v-if="clickType == 102" class="content content4" style="margin-left: -50%; margin-top: 97px">
-            <div v-if="clickType == 102" class="left">
+          <div
+            v-if="clickType == 102 || clickType == 103"
+            class="content content4"
+            style="margin-left: -50%; margin-top: 97px"
+          >
+            <div v-if="clickType == 102 || clickType == 103" class="left">
               <div class="title">基本信息</div>
               <div class="list">
                 <!-- <a-empty style="margin-top: 150px" :image="simpleImage" v-if="phoneFollowListData.length === 0" /> -->
@@ -659,6 +674,56 @@
                   <div style="margin-top: 18px; margin-left: 10px; margin-right: 10px">通话录音{{ index + 1 }}:</div>
                   <audio :src="item.callTape" controls />
                 </div>
+              </div>
+            </div>
+
+            <div v-if="clickType == 103" class="right">
+              <div class="title">视频文件</div>
+              <div class="container" style="height: 330px">
+                <div v-if="!videoListData || videoListData.length === 0" style="width: 100%">
+                  <a-empty style="margin-top: 25%" :image="simpleImage" />
+                </div>
+
+                <div class="video-wrap" v-else>
+                  <!-- class="video-player vjs-custom-skin" -->
+                  <video-player
+                    style="width: 534px; height: 300px; margin: 10px 10px 0 10px"
+                    ref="videoPlayer"
+                    :playsinline="true"
+                    :autoplay="true"
+                    :loop="true"
+                    :options="playerOptions"
+                  />
+
+                  <div
+                    class="video-list"
+                    @click="onVideoClick(item)"
+                    v-for="(item, index) in videoListData"
+                    :key="index"
+                    :value="item"
+                  >
+                    <div class="video-list-wrap">
+                      <img src="@/assets/icons/wenzhen/video.png" style="width: 15px; height: 15px" />
+                      <span style="margin-left: 10px">视频文件{{ index + 1 }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- <div
+                v-else-if="videoListData || videoListData.length > 0"
+                class="radio-content"
+                v-for="(item, index) in videoListData"
+                :key="index"
+                :value="item"
+              >
+                <div style="margin-top: 18px; margin-left: 10px; margin-right: 10px">视频文件{{ index + 1 }}:</div>
+                <video-player
+                  class="video-player vjs-custom-skin"
+                  ref="videoPlayer"
+                  :playsinline="true"
+                  :options="playerOptions"
+                />
+              </div> -->
               </div>
             </div>
           </div>
@@ -1327,7 +1392,10 @@
                         <div style="font-size: 14px; color: #1a1a1a">
                           {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.userName : '-' || '-' }}
                         </div>
-                        <div v-if="item.orderType == 'psychologyRegister'" style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                        <div
+                          v-if="item.orderType == 'psychologyRegister'"
+                          style="font-size: 12px; color: #4d4d4d; margin-left: 5px"
+                        >
                           {{ videoFollowListData.docInfo ? videoFollowListData.psycholLevelDesc : '-' || '-' }}
                         </div>
                         <div v-else style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
@@ -1346,12 +1414,11 @@
                     </div>
                   </div>
                   <div class="line"></div>
-                  <div v-if="item.orderType == 'psychologyRegister'" style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
-                    套餐名称:{{
-                      videoFollowListData.commodityName
-                        ? videoFollowListData.commodityName
-                        : '-' || '-'
-                    }}
+                  <div
+                    v-if="item.orderType == 'psychologyRegister'"
+                    style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px"
+                  >
+                    套餐名称:{{ videoFollowListData.commodityName ? videoFollowListData.commodityName : '-' || '-' }}
                   </div>
                   <div v-else style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
                     套餐名称:{{
@@ -1390,7 +1457,10 @@
                       <div class="row-content">
                         <div class="docpoint"></div>
                         <!-- TODO 这里可能要改字段 -->
-                        <div v-if="item.orderType == 'psychologyRegister'" style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                        <div
+                          v-if="item.orderType == 'psychologyRegister'"
+                          style="font-size: 12px; color: #4d4d4d; margin-left: 11px"
+                        >
                           咨询师确认时间:{{
                             videoFollowListData.rightsUseRecordStatus
                               ? videoFollowListData.rightsUseRecordStatus.confirmPeriod
@@ -1456,7 +1526,7 @@
                 >
                   <div class="video-list-wrap">
                     <img src="@/assets/icons/wenzhen/video.png" style="width: 15px; height: 15px" />
-                    <span style="margin-left: 10px">视频文件{{ index+1 }}</span>
+                    <span style="margin-left: 10px">视频文件{{ index + 1 }}</span>
                   </div>
                 </div>
               </div>
@@ -1575,7 +1645,9 @@ export default {
       currentTab: 'tw',
       currentItem: 0,
       clickType: 101,
-      showdhTab: true, //隐藏电话咨询tab标识
+      showdhTab: true, //电话咨询tab
+      showtwTab: true, //图文咨询tab
+      showspTab: true, //视频咨询tab
       jumpType: 3,
       id: '',
       preDetailData: {
@@ -1630,12 +1702,23 @@ export default {
       if (item.serviceItemType == 101) {
         //图文
         this.currentTab = 'tw'
+        this.showtwTab = true
         this.showdhTab = false
+        this.showspTab = false
         this.getChatList(item.orderId)
       } else if (item.serviceItemType == 102) {
         //电话
         this.currentTab = 'dh'
         this.showdhTab = true
+        this.showspTab = false
+        this.showtwTab = false
+        this.getphoneRecords(item)
+      } else if (item.serviceItemType == 103) {
+        //视频
+        this.currentTab = 'sp'
+        this.showspTab = true
+        this.showtwTab = false
+        this.showdhTab = false
         this.getphoneRecords(item)
       }
     },
@@ -1650,6 +1733,9 @@ export default {
         this.getChatList(this.item.orderId)
       } else if (type == 'dh') {
         this.clickType = 102
+        this.getphoneRecords(this.item)
+      }else if (type == 'sp') {
+        this.clickType = 103
         this.getphoneRecords(this.item)
       }
     },
@@ -1865,14 +1951,25 @@ export default {
           if (this.timeAxisList && this.timeAxisList.length > 0) {
             this.item = this.timeAxisList[0]
             if (this.item.serviceItemType == 101) {
+              this.showtwTab = true
               this.showdhTab = false
+              this.showspTab = false
               this.currentTab = 'tw'
               this.clickType = 101
               this.getChatList(this.item.orderId)
-            } else {
+            } else if (this.item.serviceItemType == 102) {
               this.showdhTab = true
+              this.showspTab = false
+              this.showtwTab = false
               this.currentTab = 'dh'
               this.clickType = 102
+              this.getphoneRecords(this.item)
+            } else if (this.item.serviceItemType == 103) {
+              this.showspTab = true
+              this.showdhTab = false
+              this.showtwTab = false
+              this.currentTab = 'sp'
+              this.clickType = 103
               this.getphoneRecords(this.item)
             }
           }
@@ -1884,6 +1981,7 @@ export default {
 
     //电话咨询记录
     getphoneRecords(item) {
+      console.log('TTTT:', item.id)
       this.confirmLoading = true
       this.timelineData = {}
       this.voiceListData = []
@@ -1907,8 +2005,9 @@ export default {
           })
       } else {
         list4({
-          rightsId: item.id,
-          // rightsId: item.rightsId,
+          tradeId: item.id,
+          // tradeId: '1500',
+          // rightsId: '2499',
         })
           .then((res) => {
             this.tab4Flag = true
@@ -1919,7 +2018,17 @@ export default {
               this.timelineData = {}
             }
 
-            this.voiceListData = this.phoneFollowListData.voiceTapeInfo
+            this.videoListData = this.phoneFollowListData.videoTapeInfo
+            // console.log("222222222222:", this.videoListData)
+
+            if (this.phoneFollowListData.videoTapeInfo) {
+              this.videoListData = this.phoneFollowListData.videoTapeInfo
+              if (this.videoListData && this.videoListData.length > 0) {
+                this.playerOptions.sources[0].src = this.videoListData[0].callTape
+              }
+            } else {
+              this.videoListData = []
+            }
           })
           .finally(() => {
             this.confirmLoading = false
@@ -1947,7 +2056,7 @@ export default {
           }
 
           this.videoListData = this.videoFollowListData.videoTapeInfo //TODO 这里处理视频数据
-          if (this.videoListData && this.videoListData.length>0) {
+          if (this.videoListData && this.videoListData.length > 0) {
             this.playerOptions.sources[0].src = this.videoListData[0].callTape
           }
         })
@@ -2778,7 +2887,7 @@ export default {
             flex-direction: row;
             align-items: center;
 
-            &:hover{
+            &:hover {
               cursor: pointer;
             }
 

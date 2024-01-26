@@ -2,12 +2,6 @@
   <a-spin :spinning="confirmLoading">
     <div class="div-service-control">
       <a-card :bordered="false">
-        <!-- <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
-          <a-radio-button value="1"> 待抽查 </a-radio-button>
-          <a-radio-button value="2"> 已抽查 </a-radio-button>
-        </a-radio-group> -->
-
-        <!-- 类型，1: 待抽查 2: 已抽查 -->
         <div class="div-radio">
           <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 1 }" @click="onRadioClick(1)">
             <img
