@@ -6,12 +6,30 @@
           <div class="div-service-left-control">
             <div class="search-row">
               <span class="name">模板名称：</span>
-              <a-input
+              <!-- <a-input
                 style="width: 164px"
                 v-model="queryParam.templateName"
                 allow-clear
                 placeholder="输入模板名称"
-              />
+              /> -->
+              <a-select
+                style="width: 164px"
+                show-search
+                v-model="queryAuto.templateName"
+                :filter-option="false"
+                :not-found-content="null"
+                allow-clear
+                placeholder="输入模板名称"
+                @search="handleSearchAuto"
+                @change="handleChangeAuto"
+              >
+                <a-select-option
+                  v-for="(item, index) in autoTemData"
+                  :key="index"
+                  :value="item.template_id"
+                  >{{ item.template_title }}</a-select-option
+                >
+              </a-select>
             </div>
 
             <div class="top-kuang" style="margin-top: 20px">
@@ -249,6 +267,13 @@ export default {
         sendStatus: undefined,
       },
 
+      queryAuto: {
+        templateName: undefined,
+        pageNo: 1,
+        pageSize: 15,
+      },
+      autoTemData: [],
+
       // 表头
       columns: [
         {
@@ -430,6 +455,45 @@ export default {
           this.confirmLoading2 = false;
         });
     },
+
+    //获取管理的科室 可首拼
+    getAutoSelectList(templateName) {
+      this.fetching = true;
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getRecordListGroupBy({ templateName: templateName, pageNo: 1, pageSize: 15 }).then(
+        (res) => {
+          console.log("ddd--------------auto", res);
+          this.fetching = false;
+          if (res.code == 0) {
+            this.autoTemData = res.data.records;
+          }
+        }
+      );
+    },
+    //科室搜索
+    handleSearchAuto(value) {
+      this.autoTemData = [];
+      console.log("handleSearchAuto", value);
+      this.getAutoSelectList(value);
+    },
+    //科室选择变化
+    handleChangeAuto(value) {
+      debugger;
+      console.log("handleChangeAuto", value);
+      if (value === undefined) {
+        this.autoTemData = [];
+        this.getAutoSelectList(undefined);
+      }
+      // let data = this.autoTemData.find((item) => {
+      //   item.template_id == value;
+      // });
+      let data = this.autoTemData.find((item) => item.template_id == value);
+
+      console.log("handleChangeAuto------------data", data);
+      this.handleChange(value, data.templateType);
+      // this.$refs.table.refresh(true);
+    },
+
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true;
