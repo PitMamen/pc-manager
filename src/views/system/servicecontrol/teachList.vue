@@ -1,86 +1,35 @@
 <template>
   <a-card :bordered="false">
     <a-spin :spinning="confirmLoading">
-      <div class="table-page-search-wrapper">
-        <div class="search-row">
-          <span class="name">文章名称:</span>
-          <a-select
-            style="width: 180px"
-            show-search
-            v-model="queryParam.articleId"
-            :filter-option="false"
-            :not-found-content="null"
-            allow-clear
-            placeholder="输入文章名称"
-            @search="handleSearch"
-            @change="handleChange"
-          >
-            <a-select-option
-              v-for="(item, index) in articleListTemp"
-              :key="index"
-              :value="item.message_original_id"
-              >{{ item.articleName }}</a-select-option
-            >
-          </a-select>
-        </div>
-        <div class="search-row">
-          <span class="name">执行科室:</span>
-
-          <a-select
-            style="width: 180px"
-            show-search
-            v-model="queryParam.departmentId"
-            :filter-option="false"
-            :not-found-content="fetching ? undefined : null"
-            allow-clear
-            placeholder="请选择科室"
-            @change="onDepartmentSelectChange"
-            @search="onDepartmentSelectSearch"
-          >
-            <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-            <a-select-option
-              v-for="(item, index) in originData"
-              :key="index"
-              :title="item.department_name"
-              :value="item.department_id"
-              >{{ item.department_name }}</a-select-option
-            >
-          </a-select>
-        </div>
-        <div class="search-row">
-          <span class="name">阅读状态:</span>
-          <!-- v-model="queryParams.isVisible" -->
-          <a-select
-            placeholder="请选择状态"
-            v-model="queryParam.readStatus"
-            allow-clear
-            style="width: 120px; height: 28px"
-          >
-            <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{
-              item.name
-            }}</a-select-option>
-          </a-select>
-        </div>
-        <div class="search-row">
-          <span class="name">发送时间:</span>
-          <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
-        </div>
-        <div class="action-row">
-          <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-            <a-button type="primary" icon="search" @click="queryAgain">查询</a-button>
-            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset"
-              >重置</a-button
-            >
-          </span>
-        </div>
-      </div>
       <div class="div-service-control">
         <a-spin :spinning="confirmLoading2">
           <div class="div-service-left-control">
-            <div class="top-kuang">
-              <div>文章名称</div>
+            <div class="search-row">
+              <span class="name">文章名称：</span>
+              <a-select
+                style="width: 164px"
+                show-search
+                v-model="queryParam.articleId"
+                :filter-option="false"
+                :not-found-content="null"
+                allow-clear
+                placeholder="输入文章名称"
+                @search="handleSearch"
+                @change="handleChange"
+              >
+                <a-select-option
+                  v-for="(item, index) in articleListTemp"
+                  :key="index"
+                  :value="item.message_original_id"
+                  >{{ item.articleName }}</a-select-option
+                >
+              </a-select>
+            </div>
+
+            <div class="top-kuang" style="margin-top: 20px">
+              <div style="flex: 1">文章名称</div>
               <div>发送数</div>
-              <div>成功数</div>
+              <div style="margin-left: 20px">成功数</div>
             </div>
             <div class="left-content">
               <div
@@ -94,16 +43,21 @@
                 <div class="span-name" :title="item.articleName">
                   <div
                     style="
-                      width: 55%;
+                      width: 50%;
                       overflow: hidden;
                       text-overflow: ellipsis;
-                      white-space: nowrap;
+
+                      display: -webkit-box;
+                      -webkit-box-orient: vertical;
+                      -webkit-line-clamp: 2;
                     "
                   >
                     {{ item.articleName }}
                   </div>
-                  <div style="font-size: 12px">{{ item.count }}</div>
-                  <div style="font-size: 12px; margin-left: auto">
+                  <div style="font-size: 12px; margin-left: 10px; text-align: right">
+                    {{ item.count }}
+                  </div>
+                  <div style="font-size: 12px; margin-left: auto; margin-right: 20px">
                     {{ item.readCount }}/{{ item.rate }}
                   </div>
                 </div>
@@ -122,7 +76,7 @@
             <a-pagination
               v-if="showPagination"
               simple
-              style="margin-left: 80px; margin-top: 10px; margin-bottom: 50px"
+              style="margin-left: 68px; margin-top: 10px; margin-bottom: 10px"
               :total="totalPage"
               :defaultCurrent="1"
               :current="currentPage"
@@ -133,9 +87,73 @@
         </a-spin>
 
         <div class="div-service-right-control">
+          <div class="table-page-search-wrapper">
+            <div class="search-row">
+              <span class="name">执行科室:</span>
+
+              <a-select
+                style="width: 180px"
+                show-search
+                v-model="queryParam.departmentId"
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="请选择科室"
+                @change="onDepartmentSelectChange"
+                @search="onDepartmentSelectSearch"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option
+                  v-for="(item, index) in originData"
+                  :key="index"
+                  :title="item.department_name"
+                  :value="item.department_id"
+                  >{{ item.department_name }}</a-select-option
+                >
+              </a-select>
+            </div>
+            <div class="search-row">
+              <span class="name">阅读状态:</span>
+              <!-- v-model="queryParams.isVisible" -->
+              <a-select
+                placeholder="请选择状态"
+                v-model="queryParam.readStatus"
+                allow-clear
+                style="width: 120px; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in selects"
+                  :key="item.id"
+                  :value="item.id"
+                  >{{ item.name }}</a-select-option
+                >
+              </a-select>
+            </div>
+            <div class="search-row">
+              <span class="name">发送时间:</span>
+              <a-range-picker
+                style="width: 185px"
+                :value="createValue"
+                @change="onChange"
+              />
+            </div>
+            <div class="action-row">
+              <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+                <a-button type="primary" icon="search" @click="queryAgain">查询</a-button>
+                <a-button
+                  icon="undo"
+                  style="margin-left: 8px; margin-right: 0"
+                  @click="reset"
+                  >重置</a-button
+                >
+              </span>
+            </div>
+          </div>
+
           <s-table
             :scroll="{ x: true }"
             ref="table"
+            style="margin-right: 20px;"
             size="default"
             :columns="columns"
             :data="loadData"
@@ -482,6 +500,10 @@ export default {
   display: flex;
   flex-direction: row;
 
+  // /deep/ .ant-spin-container {
+  //   height: 60vh !important;
+  // }
+
   span {
     font-size: 12px;
   }
@@ -498,10 +520,14 @@ export default {
     margin-right: 20px;
     // height: calc(100vh - 170px);
     // height: 510px;
-    min-height: 300px;
+    overflow-y: auto;
+    height: 81.7vh;
     flex-shrink: 0;
-    width: 250px;
+    width: 267px;
     overflow: hidden;
+    border: 1px solid #e6e6e6;
+    box-sizing: border-box;
+    padding: 20px 10px 20px 20px;
 
     .top-kuang {
       display: flex;
@@ -556,8 +582,8 @@ export default {
       // height: 10%;
       overflow-y: auto;
       padding: 10px;
-      height: 530px;
-      width: 238px;
+      // height: 80vh;
+      // width: 100;
       .checked {
         color: #1890ff !important;
         // border: 1px solid #1890ff !important;
@@ -565,17 +591,6 @@ export default {
       }
 
       .div-part {
-        // padding: 8px;
-        // background: rgba(0, 1, 3, 0);
-        // border: 1px solid #dfe3e5;
-        // overflow: hidden;
-        // width: 95%;
-        // display: flex;
-        // flex-direction: column;
-        // margin-bottom: 8px;
-        // // padding-left: 5%;
-        // border-bottom: #e6e6e6 1px solid;
-
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -608,9 +623,9 @@ export default {
 
           flex: 1;
           height: 85%;
-          overflow: hidden; //溢出隐藏
-          text-overflow: ellipsis; //超出省略号显示
-          white-space: nowrap; //文字不换行
+          // overflow: hidden; //溢出隐藏
+          // text-overflow: ellipsis; //超出省略号显示
+          // white-space: nowrap; //文字不换行
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
@@ -665,7 +680,10 @@ export default {
   }
   .div-service-right-control {
     flex: 1;
-    width: calc(100% - 20px);
+    // width: calc(100% - 20px);
+    box-sizing: border-box;
+    padding: 20px 20px 20px 20px;
+    border: 1px solid #e6e6e6;
   }
 }
 
