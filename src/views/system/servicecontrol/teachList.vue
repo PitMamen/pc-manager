@@ -594,7 +594,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        height: 40px;
+        // height: 40px;
         font-size: 12px;
         align-items: center;
 
@@ -606,7 +606,7 @@ export default {
           width: 100%;
           height: 0.5px;
           background: #e6e6e6;
-          margin-top: 5px;
+          margin-top: 10px;
           margin-bottom: 5px;
           margin-right: 10%;
         }
