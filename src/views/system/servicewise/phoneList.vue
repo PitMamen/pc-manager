@@ -67,13 +67,13 @@
                         width: 60%;
                         overflow: hidden;
                         text-overflow: ellipsis;
-                        
+
                         display: -webkit-box;
                         -webkit-box-orient: vertical;
                         -webkit-line-clamp: 2;
                       "
                     >
-                      {{ item.title }}分为若干份儿我让他海棠依旧后添加团结统一具体有
+                      {{ item.title }}
                     </div>
                     <div style="font-size: 12px; margin-left: auto; margin-right: 20px">
                       {{ item.count }}

@@ -15,9 +15,12 @@
             @search="handleSearch"
             @change="handleChange"
           >
-            <a-select-option v-for="(item, index) in articleListTemp" :key="index" :value="item.message_original_id">{{
-              item.articleName
-            }}</a-select-option>
+            <a-select-option
+              v-for="(item, index) in articleListTemp"
+              :key="index"
+              :value="item.message_original_id"
+              >{{ item.articleName }}</a-select-option
+            >
           </a-select>
         </div>
         <div class="search-row">
@@ -53,7 +56,9 @@
             allow-clear
             style="width: 120px; height: 28px"
           >
-            <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+            <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{
+              item.name
+            }}</a-select-option>
           </a-select>
         </div>
         <div class="search-row">
@@ -63,7 +68,9 @@
         <div class="action-row">
           <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
             <a-button type="primary" icon="search" @click="queryAgain">查询</a-button>
-            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
+            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset"
+              >重置</a-button
+            >
           </span>
         </div>
       </div>
@@ -85,11 +92,20 @@
                 @click="handleChange(item.message_original_id, index)"
               >
                 <div class="span-name" :title="item.articleName">
-                  <div style="width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                  <div
+                    style="
+                      width: 55%;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                    "
+                  >
                     {{ item.articleName }}
                   </div>
                   <div style="font-size: 12px">{{ item.count }}</div>
-                  <div style="font-size: 12px; margin-left: auto">{{ item.readCount }}/{{ item.rate }}</div>
+                  <div style="font-size: 12px; margin-left: auto">
+                    {{ item.readCount }}/{{ item.rate }}
+                  </div>
                 </div>
 
                 <div class="bottom-line"></div>
@@ -106,7 +122,7 @@
             <a-pagination
               v-if="showPagination"
               simple
-              style="margin-left: 80px;margin-top: 10px;margin-bottom: 50px;"
+              style="margin-left: 80px; margin-top: 10px; margin-bottom: 50px"
               :total="totalPage"
               :defaultCurrent="1"
               :current="currentPage"
@@ -127,13 +143,22 @@
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a-popconfirm title="确定重新发送吗？" ok-text="确定" cancel-text="取消" @confirm="send(record)">
+              <a-popconfirm
+                title="确定重新发送吗？"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="send(record)"
+              >
                 <a :disabled="record.readStatus.value == 2">重新发送</a>
               </a-popconfirm>
             </span>
             <span slot="status" slot-scope="text, record">
-              <span v-if="record.readStatus.value == 2" style="color: green">{{ record.readStatus.description }}</span>
-              <span v-if="record.readStatus.value == 1" style="color: red">{{ record.readStatus.description }}</span>
+              <span v-if="record.readStatus.value == 2" style="color: green">{{
+                record.readStatus.description
+              }}</span>
+              <span v-if="record.readStatus.value == 1" style="color: red">{{
+                record.readStatus.description
+              }}</span>
             </span>
           </s-table>
         </div>
@@ -146,20 +171,20 @@
 </template>
 
 <script>
-import { STable } from '@/components'
-import { Pagination } from '@/components'
-import { TRUE_USER } from '@/store/mutation-types'
-import addCategory from '../teach/addCategory'
-import addModel from '../teach/addModel'
-import checkModel from '../teach/checkModel'
-import Vue from 'vue'
+import { STable } from "@/components";
+import { Pagination } from "@/components";
+import { TRUE_USER } from "@/store/mutation-types";
+import addCategory from "../teach/addCategory";
+import addModel from "../teach/addModel";
+import checkModel from "../teach/checkModel";
+import Vue from "vue";
 import {
   getFollowArticleData,
   modifyArticle,
   getDepartmentListForSelect,
   getFollowArticleUserData,
   deleteArticle,
-} from '@/api/modular/system/posManage'
+} from "@/api/modular/system/posManage";
 
 export default {
   components: {
@@ -199,234 +224,237 @@ export default {
         articleId: undefined,
         articleName: undefined,
         departmentId: undefined,
-        startTime: '',
-        endTime: '',
+        startTime: "",
+        endTime: "",
         readStatus: undefined,
       },
 
       // 表头
       columns: [
         {
-          title: '文章名称',
-          dataIndex: 'articleName',
+          title: "文章名称",
+          dataIndex: "articleName",
         },
 
         {
-          title: '姓名',
-          dataIndex: 'userName',
+          title: "姓名",
+          dataIndex: "userName",
         },
         {
-          title: '执行科室',
-          dataIndex: 'executeDepartmentName',
+          title: "执行科室",
+          dataIndex: "executeDepartmentName",
         },
         {
-          title: '随访方案',
-          dataIndex: 'planName',
+          title: "随访方案",
+          dataIndex: "planName",
         },
         {
-          title: '发送方式',
-          dataIndex: 'messageTypeValue',
+          title: "发送方式",
+          dataIndex: "messageTypeValue",
         },
         {
-          title: '发送时间',
-          dataIndex: 'actualExecTime',
+          title: "发送时间",
+          dataIndex: "actualExecTime",
         },
 
         {
-          title: '阅读状态',
+          title: "阅读状态",
           // dataIndex: 'status',
-          scopedSlots: { customRender: 'status' },
+          scopedSlots: { customRender: "status" },
         },
         {
-          title: '操作',
-          fixed: 'right',
+          title: "操作",
+          fixed: "right",
           width: 80,
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
+          dataIndex: "action",
+          scopedSlots: { customRender: "action" },
         },
       ],
 
       selects: [
         {
-          id: '',
-          name: '全部',
+          id: "",
+          name: "全部",
         },
         {
           id: 1,
-          name: '未读',
+          name: "未读",
         },
         {
           id: 2,
-          name: '已读',
+          name: "已读",
         },
       ],
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getFollowArticleUserData(Object.assign(parameter, this.queryParam)).then((res) => {
-          //组装控件需要的数据结构
-          var data = {
-            pageNo: parameter.pageNo,
-            pageSize: parameter.pageSize,
-            totalRows: res.data.total,
-            totalPage: res.data.pages,
-            rows: res.data.records,
+        return getFollowArticleUserData(Object.assign(parameter, this.queryParam)).then(
+          (res) => {
+            //组装控件需要的数据结构
+            var data = {
+              pageNo: parameter.pageNo,
+              pageSize: parameter.pageSize,
+              totalRows: res.data.total,
+              totalPage: res.data.pages,
+              rows: res.data.records,
+            };
+
+            //设置序号
+            data.rows.forEach((item, index) => {
+              item.messageTypeValue = item.messageType.description;
+            });
+
+            return data;
           }
-
-          //设置序号
-          data.rows.forEach((item, index) => {
-            item.messageTypeValue = item.messageType.description
-          })
-
-          return data
-        })
+        );
       },
 
       selectedRowKeys: [],
       selectedRows: [],
-    }
+    };
   },
 
   created() {
-    this.getFollowArticleDataOut(true)
-    this.getDepartmentSelectList(undefined)
+    this.getFollowArticleDataOut(true);
+    this.getDepartmentSelectList(undefined);
   },
 
   methods: {
     handleChangePage(value) {
-      this.currentPage = value
+      this.currentPage = value;
       // console.log("fff:",this.currentPage,value)
-      this.getFollowArticleDataOut(false)
+      this.getFollowArticleDataOut(false);
     },
 
     queryAgain() {
-      this.$refs.table.refresh()
+      this.$refs.table.refresh();
     },
     reset() {
-      this.queryParam.departmentId = undefined
-      this.queryParam.startTime = ''
-      this.queryParam.endTime = ''
-      this.queryParam.readStatus = undefined
-      this.queryParam.articleId = undefined
-      this.queryParam.articleName = undefined
+      this.queryParam.departmentId = undefined;
+      this.queryParam.startTime = "";
+      this.queryParam.endTime = "";
+      this.queryParam.readStatus = undefined;
+      this.queryParam.articleId = undefined;
+      this.queryParam.articleName = undefined;
 
-      this.getFollowArticleDataOut(true)
+      this.getFollowArticleDataOut(true);
     },
 
     onTabChange(key) {
-      console.log(key)
+      console.log(key);
     },
     //获取文章列表
     getFollowArticleDataOut(isRefreshAll) {
-      this.confirmLoading2 = true
+      this.confirmLoading2 = true;
       var postData = {
         departmentId: this.queryParam.departmentId,
         startTime: this.queryParam.startTime,
         endTime: this.queryParam.endTime,
         pageNo: this.currentPage,
         pageSize: 15,
-      }
+      };
       getFollowArticleData(postData)
         .then((res) => {
           if (res.code == 0 && res.data.records.length > 0) {
-            this.showPagination = true
+            this.showPagination = true;
             if (this.queryParam.articleId) {
               res.data.records.forEach((item) => {
-                item.checked = item.message_original_id == this.queryParam.articleId
-              })
+                item.checked = item.message_original_id == this.queryParam.articleId;
+              });
             } else {
-              res.data.records[0].checked = true
-              this.queryParam.articleId = res.data.records[0].message_original_id
-              this.queryParam.articleName = res.data.records[0].articleName
+              res.data.records[0].checked = true;
+              this.queryParam.articleId = res.data.records[0].message_original_id;
+              this.queryParam.articleName = res.data.records[0].articleName;
             }
 
-            this.articleList = res.data.records
-            this.articleListTemp = res.data.records
-            this.totalPage = res.data.total
-            this.currentPage = res.data.current
-            this.$set(this.articleList[0], 'isChecked', true)
+            this.articleList = res.data.records;
+            this.articleListTemp = res.data.records;
+            this.totalPage = res.data.total;
+            this.currentPage = res.data.current;
+            this.$set(this.articleList[0], "isChecked", true);
             if (isRefreshAll) {
-              this.$refs.table.refresh()
+              this.$refs.table.refresh();
             }
           } else {
-            this.showPagination = false
-            this.queryParam.articleId = undefined
-            this.articleList = []
-            this.articleListTemp = []
+            this.showPagination = false;
+            this.queryParam.articleId = undefined;
+            this.articleList = [];
+            this.articleListTemp = [];
             if (isRefreshAll) {
-              this.$refs.table.refresh()
+              this.$refs.table.refresh();
             }
           }
         })
         .finally(() => {
-          this.confirmLoading2 = false
-        })
+          this.confirmLoading2 = false;
+        });
     },
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
-      this.fetching = true
+      this.fetching = true;
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
-        this.fetching = false
+      getDepartmentListForSelect(departmentName, "managerDept").then((res) => {
+        this.fetching = false;
         if (res.code == 0) {
-          this.originData = res.data.records
+          this.originData = res.data.records;
         }
-      })
+      });
     },
     //科室搜索
     onDepartmentSelectSearch(value) {
-      this.originData = []
-      this.getDepartmentSelectList(value)
+      this.originData = [];
+      this.getDepartmentSelectList(value);
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
-      console.log('onDepartmentSelectChange', value)
+      console.log("onDepartmentSelectChange", value);
       if (value === undefined) {
-        this.originData = []
-        this.getDepartmentSelectList(undefined)
+        this.originData = [];
+        this.getDepartmentSelectList(undefined);
       }
       // this.$refs.table.refresh(true)
     },
     handleSearch(inputName) {
       if (inputName) {
-        this.articleListTemp = this.articleList.filter((item) => item.articleName.indexOf(inputName) != -1)
+        this.articleListTemp = this.articleList.filter(
+          (item) => item.articleName.indexOf(inputName) != -1
+        );
       } else {
-        this.articleListTemp = this.articleList
+        this.articleListTemp = this.articleList;
       }
     },
     handleChange(value, indexClick) {
-      console.log(value)
-      if(value){
-        this.queryParam.articleId = value
-      this.articleList.forEach((item) => {
-        this.$set(item, 'isChecked', false)
-        if (item.message_original_id == this.queryParam.articleId) {
-          this.queryParam.articleName = item.articleName
-          this.$set(item, 'isChecked', true)
-        }
-      })
-      }else{
-        this.queryParam.articleId = undefined
-        this.queryParam.articleName = undefined
+      console.log(value);
+      if (value) {
+        this.queryParam.articleId = value;
         this.articleList.forEach((item) => {
-        this.$set(item, 'isChecked', false)
-        
-      })
+          this.$set(item, "isChecked", false);
+          if (item.message_original_id == this.queryParam.articleId) {
+            this.queryParam.articleName = item.articleName;
+            this.$set(item, "isChecked", true);
+          }
+        });
+      } else {
+        this.queryParam.articleId = undefined;
+        this.queryParam.articleName = undefined;
+        this.articleList.forEach((item) => {
+          this.$set(item, "isChecked", false);
+        });
       }
 
-      this.articleListTemp = this.articleList
-      this.$refs.table.refresh()
+      this.articleListTemp = this.articleList;
+      this.$refs.table.refresh();
     },
 
     onChange(momentArr, dateArr) {
-      this.createValue = momentArr
-      this.queryParam.startTime = dateArr[0]
-      this.queryParam.endTime = dateArr[1]
+      this.createValue = momentArr;
+      this.queryParam.startTime = dateArr[0];
+      this.queryParam.endTime = dateArr[1];
     },
 
     //重新发送
     send(record) {
-      this.$message.success('该功能待开发')
+      this.$message.success("该功能待开发");
       // this.confirmLoading = true
       // modifyArticle({ id: record.articleId, status: '2' }).then((res) => {
       //   this.confirmLoading = false
@@ -440,10 +468,10 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh()
+      this.$refs.table.refresh();
     },
   },
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -705,5 +733,3 @@ button {
   color: #000;
 }
 </style>
-
-
