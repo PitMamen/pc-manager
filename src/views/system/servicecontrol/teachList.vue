@@ -31,7 +31,7 @@
               <div>发送数</div>
               <div style="margin-left: 20px">成功数</div>
             </div>
-            <div class="left-content">
+            <div class="left-content-teach">
               <div
                 class="div-part"
                 :class="{ checked: item.isChecked }"
@@ -578,7 +578,7 @@ export default {
       border-bottom: 2px solid #409eff;
     }
 
-    .left-content {
+    .left-content-teach {
       // height: 10%;
       overflow-y: auto;
       padding: 10px;

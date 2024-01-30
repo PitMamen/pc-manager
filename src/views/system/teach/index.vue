@@ -7,7 +7,7 @@
             <div :class="tabKey == 1 ? 'toptab-yes' : 'toptab-no'" @click="tabKey = 1">文章类型</div>
             <div :class="tabKey == 2 ? 'toptab-yes' : 'toptab-no'" @click="tabKey = 2">科室</div>
           </div>
-          <div class="left-content" v-if="tabKey == 1">
+          <div class="left-content-article" v-if="tabKey == 1">
             <div class="typeadd" @click="$refs.addCategory.addModel()">
               新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
             </div>
@@ -27,7 +27,7 @@
               </div>
             </div>
           </div>
-          <div class="left-content" v-if="tabKey == 2">
+          <div class="left-content-article" v-if="tabKey == 2">
             <div class="ksview" v-for="(item, index) in originData" :key="index" @click="onDepartmentChange(item)">
               <div :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'">{{ item.department_name }}</div>
               <a-icon v-if="item.checked" type="check" :style="{ color: '#409EFF' }" />
@@ -622,7 +622,7 @@ export default {
       border-bottom: 2px solid #409eff;
     }
 
-    .left-content {
+    .left-content-article {
       height: 100%;
       overflow-y: auto;
       padding: 10px;
