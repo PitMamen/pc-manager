@@ -37,9 +37,10 @@
               <div class="div-content">
                 <span class="span-item-name">单价 </span>
                 <a-input-number
+                  :precision="0"
                   style="display: inline-block; width: 70px"
                   v-model="item.price"
-                  :min="1"
+                  :min="0"
                   :max="10000"
                   :maxLength="30"
                   allow-clear
@@ -56,6 +57,7 @@
                   v-model="item.textCount"
                   style="display: inline-block; width: 60px"
                   allow-clear
+                  onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
                 />
 
                 <!--  -->
@@ -66,7 +68,12 @@
                   v-model="item.followPlanId"
                   placeholder="请选择随访计划"
                   allow-clear
+                  :filter-option="false"
+                  :not-found-content="fetching ? undefined : null"
+                  show-search
                   style="width: 120px; height: 28px"
+                  @change="onplanSelectChange"
+                  @search="planSelectSearch"
                 >
                   <a-select-option v-for="item in plans" :key="item.id" :value="item.id">{{
                     item.planName
@@ -118,7 +125,7 @@
                 <script>
 import {
   mgrDoctorRehabilitationFollows,
-  qryFollowPlanByFollowType,
+  rehabilitationPlans,
   deleteRehabilitationFollowCommodity,
   mgrSaveDoctorRehabilitationFollows,
 } from '@/api/modular/system/posManage'
@@ -139,7 +146,7 @@ export default {
       headers: {},
       confirmLoading: false,
       achievementRatio: 0,
-
+      fetching: false,
       taskList: [
         {
           commodityId: '',
@@ -175,7 +182,7 @@ export default {
         followPlanId: '',
         followPlanName: '',
         price: 0,
-        textCount: 0,
+        textCount: '',
         isLimit: false,
       })
     },
@@ -200,21 +207,32 @@ export default {
     /**
      * 随访方案列表
      */
-    qryFollowPlanByFollowTypeOut() {
-      // this.confirmLoading = true
-      qryFollowPlanByFollowType({
-        tenantId: '',
-        hospitalCode: this.record.hospitalCode,
-        followType: 4,
-      })
+    qryFollowPlanByFollowTypeOut(name) {
+      this.confirmLoading = true
+      this.fetching = true
+      rehabilitationPlans({ queryText: name })
         .then((res) => {
+          this.fetching = false
           if (res.code == 0) {
             this.plans = res.data
           }
         })
         .finally((res) => {
-          // this.confirmLoading = false
+          this.confirmLoading = false
         })
+    },
+
+    //机构搜索
+    planSelectSearch(value) {
+      this.plans = []
+      this.qryFollowPlanByFollowTypeOut(value)
+    },
+    //机构选择变化
+    onplanSelectChange(value) {
+      if (value === undefined) {
+        this.plans = []
+        this.qryFollowPlanByFollowTypeOut(undefined)
+      }
     },
 
     // 单独删除
@@ -236,6 +254,9 @@ export default {
 
     limitEnable(item) {
       item.isLimit = !item.isLimit
+      if (!item.isLimit) {
+        item.textCount = ''
+      }
     },
 
     // limitService(item) {
@@ -248,7 +269,7 @@ export default {
       this.visible = true
       this.record = record
       console.log('1111:', record)
-      this.qryFollowPlanByFollowTypeOut()
+      this.qryFollowPlanByFollowTypeOut(undefined)
       this.getDetailData1()
     },
 
@@ -269,8 +290,8 @@ export default {
               if (this.taskList && this.taskList.length > 0) {
                 this.taskList.forEach((item) => {
                   this.$set(item, 'expireValue', item.expireValue + '天')
-                  this.$set(item, 'textCount', item.textCount || 0)
-                  this.$set(item, 'isLimit', false)
+                  this.$set(item, 'textCount', item.textCount || '')
+                  // this.$set(item, 'isLimit', false)
                 })
               }
             }
@@ -284,9 +305,29 @@ export default {
     },
 
     handleSubmit() {
-      var itemsTemp = []
+      if (this.taskList.length > 0) {
+        for (let index = 0; index < this.taskList.length; index++) {
+          if (!this.taskList[index].price) {
+            this.$message.warning('请输入价格!')
+            return
+          }
+
+          if (!this.taskList[index].followPlanId) {
+            this.$message.warning('请选择随访计划!')
+            return
+          }
+
+          if (this.taskList[index].isLimit) {
+            if (this.taskList[index].textCount == '' || this.taskList[index].textCount == 0) {
+              this.$message.warning('请输入限制条数!')
+              return
+            }
+          }
+        }
+      }
 
       let uploadData = {
+        achievementRatio: this.achievementRatio,
         doctorUserId: this.record.userId,
         items: this.taskList,
       }

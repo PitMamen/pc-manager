@@ -339,6 +339,7 @@
                 <span class="span-item-name">单价 </span>
                 <a-input-number
                   style="display: inline-block; width: 70px"
+                  :precision="0"
                   v-model="item.saleAmount"
                   :min="1"
                   :max="10000"
@@ -900,6 +901,29 @@ export default {
 
     handleSubmit() {
       var isReturn = false
+
+      if (this.taskList && this.taskList.length > 0) {
+        for (let index = 0; index < this.taskList.length; index++) {
+          if (this.taskList[index].saleAmount == 0 || !this.taskList[index].saleAmount) {
+            this.$message.warning('请输入单价!')
+            return
+          }
+          // if (this.taskList[index].isLimit) {
+          //   if (this.taskList[index].serviceStrip == '') {
+          //     this.$message.warning('请输入限制条数!')
+          //     return
+          //   }
+          // }
+
+          if (this.taskList[index].isSerLimit) {
+            if (this.taskList[index].serviceTime == '') {
+              this.$message.warning('请输入服务时效!')
+              return
+            }
+          }
+        }
+      }
+
       this.taskList.forEach((itemTask) => {
         if (itemTask.isLimit) {
           console.log('IIIIII:', itemTask.serviceStrip)

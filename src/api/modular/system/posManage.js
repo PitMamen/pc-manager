@@ -4028,6 +4028,20 @@ export function qryFollowPlanByFollowType(data) {
   })
 }
 
+
+// 随访计划
+export function rehabilitationPlans(data) {
+  return axios({
+    url: "/follow-api/follow/plan/rehabilitationPlans",
+    method: 'get',
+    params: data,
+  })
+}
+
+
+
+
+
 /**
  * 套餐分类 分页查询(健康商城应用)
  */
