@@ -278,22 +278,22 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             //区分新增和修改
-            if (res.data && res.data.items.length > 0) {
+            if (res.data) {
               this.achievementRatio = res.data.achievementRatio
-
-              if (!res.data.items || res.data.items.length == 0) {
+              if (res.data.items && res.data.items.length > 0) {
+                this.taskList = res.data.items
+                if (this.taskList && this.taskList.length > 0) {
+                  this.taskList.forEach((item) => {
+                    this.$set(item, 'expireValue', item.expireValue + '天')
+                    this.$set(item, 'textCount', item.textCount || '')
+                    // this.$set(item, 'isLimit', false)
+                  })
+                }
+              } else {
                 this.addTask()
-                return
               }
-
-              this.taskList = res.data.items
-              if (this.taskList && this.taskList.length > 0) {
-                this.taskList.forEach((item) => {
-                  this.$set(item, 'expireValue', item.expireValue + '天')
-                  this.$set(item, 'textCount', item.textCount || '')
-                  // this.$set(item, 'isLimit', false)
-                })
-              }
+            } else {
+              this.addTask()
             }
           } else {
             this.$message.error(res.message)
