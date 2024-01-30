@@ -1,69 +1,41 @@
 <template>
   <a-card :bordered="false">
     <a-spin :spinning="confirmLoading">
-      <div class="table-page-search-wrapper">
-        <div class="search-row">
-          <span class="name">模板名称:</span>
-          <a-input v-model="queryParam.templateName" allow-clear placeholder="输入模板名称" style="width: 180px" />
-        </div>
-        <div class="search-row">
-          <span class="name">执行科室:</span>
-
-          <a-select
-            style="width: 180px"
-            show-search
-            v-model="queryParam.executeDepartmentId"
-            :filter-option="false"
-            :not-found-content="fetching ? undefined : null"
-            allow-clear
-            placeholder="请选择科室"
-            @change="onDepartmentSelectChange"
-            @search="onDepartmentSelectSearch"
-          >
-            <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-            <a-select-option
-              v-for="(item, index) in originData"
-              :key="index"
-              :title="item.department_name"
-              :value="item.department_id"
-              >{{ item.department_name }}</a-select-option
-            >
-          </a-select>
-        </div>
-        <div class="search-row">
-          <span class="name">发送状态:</span>
-          <!-- v-model="queryParams.isVisible" -->
-          <a-select
-            placeholder="请选择状态"
-            v-model="queryParam.sendStatus"
-            allow-clear
-            style="width: 120px; height: 28px"
-          >
-            <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-          </a-select>
-        </div>
-        <div class="search-row">
-          <span class="name">发送时间:</span>
-          <a-range-picker style="width: 185px"  :value="createValue" @change="onChange" />
-        </div>
-        <div class="search-row">
-          <span class="name">随访方案:</span>
-          <a-input v-model="queryParam.followPlanName" allow-clear placeholder="输入方案名称" style="width: 180px" />
-        </div>
-        <div class="action-row">
-          <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-            <a-button type="primary" icon="search" @click="queryAgain">查询</a-button>
-            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
-          </span>
-        </div>
-      </div>
       <div class="div-service-control">
         <a-spin :spinning="confirmLoading2">
           <div class="div-service-left-control">
-            <div class="top-kuang">
-              <div>模板名称</div>
-              <div >发送数</div>
-              <div>成功数</div>
+            <div class="search-row">
+              <span class="name">模板名称：</span>
+              <!-- <a-input
+                style="width: 164px"
+                v-model="queryParam.templateName"
+                allow-clear
+                placeholder="输入模板名称"
+              /> -->
+              <a-select
+                style="width: 164px"
+                show-search
+                v-model="queryAuto.templateName"
+                :filter-option="false"
+                :not-found-content="null"
+                allow-clear
+                placeholder="输入模板名称"
+                @search="handleSearchAuto"
+                @change="handleChangeAuto"
+              >
+                <a-select-option
+                  v-for="(item, index) in autoTemData"
+                  :key="index"
+                  :value="item.template_id"
+                  >{{ item.template_title }}</a-select-option
+                >
+              </a-select>
+            </div>
+
+            <div class="top-kuang" style="margin-top: 20px">
+              <div style="flex: 1">模板名称</div>
+              <div>发送数</div>
+              <div style="margin-left: 20px">成功数</div>
             </div>
             <div class="left-content">
               <div
@@ -75,11 +47,25 @@
                 @click="handleChange(item.template_id, item.templateType)"
               >
                 <div class="span-name" :title="item.articleName">
-                  <div style="width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                  <div
+                    style="
+                      width: 50%;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+
+                      display: -webkit-box;
+                      -webkit-box-orient: vertical;
+                      -webkit-line-clamp: 2;
+                    "
+                  >
                     {{ item.template_title }}
                   </div>
-                  <div style="font-size: 12px">{{ item.co }}</div>
-                  <div style="font-size: 12px; margin-left: auto">{{ item.succ }}/{{ item.rate }}%</div>
+                  <div style="font-size: 12px; margin-left: 10px; text-align: right">
+                    {{ item.co }}
+                  </div>
+                  <div style="font-size: 12px; margin-left: auto; margin-right: 20px">
+                    {{ item.succ }}/{{ item.rate }}%
+                  </div>
                 </div>
 
                 <div class="bottom-line"></div>
@@ -96,7 +82,7 @@
             <a-pagination
               v-if="showPagination"
               simple
-              style="margin-left: 80px; margin-top: 10px; margin-bottom: 50px"
+              style="margin-left: 68px; margin-top: 10px; margin-bottom: 10px"
               :total="totalPage"
               :defaultCurrent="1"
               :current="currentPage"
@@ -107,17 +93,95 @@
         </a-spin>
 
         <div class="div-service-right-control">
+          <div class="table-page-search-wrapper">
+            <div class="search-row">
+              <span class="name">执行科室:</span>
+
+              <a-select
+                style="width: 180px"
+                show-search
+                v-model="queryParam.executeDepartmentId"
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="请选择科室"
+                @change="onDepartmentSelectChange"
+                @search="onDepartmentSelectSearch"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option
+                  v-for="(item, index) in originData"
+                  :key="index"
+                  :title="item.department_name"
+                  :value="item.department_id"
+                  >{{ item.department_name }}</a-select-option
+                >
+              </a-select>
+            </div>
+            <div class="search-row">
+              <span class="name">发送状态:</span>
+              <!-- v-model="queryParams.isVisible" -->
+              <a-select
+                placeholder="请选择状态"
+                v-model="queryParam.sendStatus"
+                allow-clear
+                style="width: 120px; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in selects"
+                  :key="item.id"
+                  :value="item.id"
+                  >{{ item.name }}</a-select-option
+                >
+              </a-select>
+            </div>
+            <div class="search-row">
+              <span class="name">发送时间:</span>
+              <a-range-picker
+                style="width: 185px"
+                :value="createValue"
+                @change="onChange"
+              />
+            </div>
+            <div class="search-row">
+              <span class="name">随访方案:</span>
+              <a-input
+                v-model="queryParam.followPlanName"
+                allow-clear
+                placeholder="输入方案名称"
+                style="width: 180px"
+              />
+            </div>
+            <div class="action-row">
+              <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+                <a-button type="primary" icon="search" @click="queryAgain">查询</a-button>
+                <a-button
+                  icon="undo"
+                  style="margin-left: 8px; margin-right: 0"
+                  @click="reset"
+                  >重置</a-button
+                >
+              </span>
+            </div>
+          </div>
+
           <s-table
             :scroll="{ x: true }"
             ref="table"
             size="default"
+            style="margin-right: 20px"
             :columns="columns"
             :data="loadData"
             :alert="true"
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a-popconfirm title="确定重新发送吗？" ok-text="确定" cancel-text="取消" @confirm="send(record)">
+              <a-popconfirm
+                title="确定重新发送吗？"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="send(record)"
+              >
                 <a :disabled="record.status == 1">重新发送</a>
               </a-popconfirm>
             </span>
@@ -141,15 +205,15 @@
 </template>
 
 <script>
-import { STable } from '@/components'
-import { Pagination } from '@/components'
-import { TRUE_USER } from '@/store/mutation-types'
-import addCategory from '../teach/addCategory'
-import addModel from '../teach/addModel'
-import checkModel from '../teach/checkModel'
-import Vue from 'vue'
-import { formatDateFull, formatDate } from '@/utils/util'
-import moment from 'moment'
+import { STable } from "@/components";
+import { Pagination } from "@/components";
+import { TRUE_USER } from "@/store/mutation-types";
+import addCategory from "../teach/addCategory";
+import addModel from "../teach/addModel";
+import checkModel from "../teach/checkModel";
+import Vue from "vue";
+import { formatDateFull, formatDate } from "@/utils/util";
+import moment from "moment";
 import {
   getFollowArticleData,
   getRecordList,
@@ -157,7 +221,7 @@ import {
   getFollowArticleUserData,
   deleteArticle,
   getRecordListGroupBy,
-} from '@/api/modular/system/posManage'
+} from "@/api/modular/system/posManage";
 
 export default {
   components: {
@@ -175,7 +239,7 @@ export default {
       fetching: false,
       showPagination: true,
       // 高级搜索 展开/关闭
-      dateFormat: 'YYYY-MM-DD',
+      dateFormat: "YYYY-MM-DD",
       advanced: false,
       originData: [],
       articleListTemp: [],
@@ -198,71 +262,78 @@ export default {
         templateName: undefined,
         executeDepartmentId: undefined,
         followPlanName: undefined,
-        sendStartTime: '',
-        sendEndTime: '',
+        sendStartTime: "",
+        sendEndTime: "",
         sendStatus: undefined,
       },
+
+      queryAuto: {
+        templateName: undefined,
+        pageNo: 1,
+        pageSize: 15,
+      },
+      autoTemData: [],
 
       // 表头
       columns: [
         {
-          title: '模板名称',
-          dataIndex: 'template_title',
+          title: "模板名称",
+          dataIndex: "template_title",
         },
 
         {
-          title: '姓名',
-          dataIndex: 'user_name',
+          title: "姓名",
+          dataIndex: "user_name",
         },
         {
-          title: '执行科室',
-          dataIndex: 'department_name',
+          title: "执行科室",
+          dataIndex: "department_name",
         },
         {
-          title: '随访方案',
-          dataIndex: 'plan_name',
+          title: "随访方案",
+          dataIndex: "plan_name",
         },
         {
-          title: '发送方式',
+          title: "发送方式",
           width: 80,
-          dataIndex: 'send_type',
+          dataIndex: "send_type",
         },
         {
-          title: '发送时间',
-          dataIndex: 'created_time',
+          title: "发送时间",
+          dataIndex: "created_time",
         },
 
         {
-          title: '发送状态',
+          title: "发送状态",
           width: 80,
-          scopedSlots: { customRender: 'status' },
+          scopedSlots: { customRender: "status" },
         },
         {
-          title: '微信登记',
+          title: "微信登记",
           width: 80,
-          scopedSlots: { customRender: 'wx' },
+          scopedSlots: { customRender: "wx" },
         },
         {
-          title: '操作',
-          fixed: 'right',
+          title: "操作",
+          fixed: "right",
           width: 80,
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
+          dataIndex: "action",
+          scopedSlots: { customRender: "action" },
         },
       ],
 
       selects: [
         {
-          id: '',
-          name: '全部',
+          id: "",
+          name: "全部",
         },
         {
           id: 2,
-          name: '失败',
+          name: "失败",
         },
         {
           id: 1,
-          name: '成功',
+          name: "成功",
         },
       ],
 
@@ -276,136 +347,175 @@ export default {
             totalRows: res.data.total,
             totalPage: res.data.pages,
             rows: res.data.records,
-          }
+          };
 
           //设置序号
           // data.rows.forEach((item, index) => {
           //   item.messageTypeValue = item.messageType.description
           // })
 
-          return data
-        })
+          return data;
+        });
       },
 
       selectedRowKeys: [],
       selectedRows: [],
-    }
+    };
   },
 
   created() {
-     
-    
-    this.queryParam.sendStartTime = formatDate(new Date(new Date().getTime()-30*24*60*60*1000))
-    this.queryParam.sendEndTime =formatDate(new Date())
-    this.createValue = [moment(this.queryParam.sendStartTime, 'YYYY-MM-DD'),moment(this.queryParam.sendEndTime, 'YYYY-MM-DD')]
-    
+    this.queryParam.sendStartTime = formatDate(
+      new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000)
+    );
+    this.queryParam.sendEndTime = formatDate(new Date());
+    this.createValue = [
+      moment(this.queryParam.sendStartTime, "YYYY-MM-DD"),
+      moment(this.queryParam.sendEndTime, "YYYY-MM-DD"),
+    ];
 
-    this.getFollowArticleDataOut(true)
-    this.getDepartmentSelectList(undefined)
+    this.getFollowArticleDataOut(true);
+    this.getDepartmentSelectList(undefined);
   },
 
   methods: {
     moment,
     handleChangePage(value) {
-      this.currentPage = value
+      this.currentPage = value;
       // console.log("fff:",this.currentPage,value)
-      this.getFollowArticleDataOut(false)
+      this.getFollowArticleDataOut(false);
     },
 
     queryAgain() {
-      this.queryParam.templateId = undefined
+      this.queryParam.templateId = undefined;
       this.articleList.forEach((item) => {
-        this.$set(item, 'isChecked', false)
-      })
-      this.$refs.table.refresh()
-    
+        this.$set(item, "isChecked", false);
+      });
+      this.$refs.table.refresh();
     },
     reset() {
-      this.queryParam.executeDepartmentId = undefined
-      this.queryParam.sendStartTime = ''
-      this.queryParam.sendEndTime = ''
-      this.queryParam.sendStatus = undefined
-      this.queryParam.templateId = undefined
-      this.queryParam.templateName = undefined
-      this.createValue = []
-      ;(this.queryParam.followPlanName = undefined), this.getFollowArticleDataOut(true)
+      this.queryParam.executeDepartmentId = undefined;
+      this.queryParam.sendStartTime = "";
+      this.queryParam.sendEndTime = "";
+      this.queryParam.sendStatus = undefined;
+      this.queryParam.templateId = undefined;
+      this.queryParam.templateName = undefined;
+      this.createValue = [];
+      (this.queryParam.followPlanName = undefined), this.getFollowArticleDataOut(true);
     },
 
     onTabChange(key) {
-      console.log(key)
+      console.log(key);
     },
     //获取模板列表
     getFollowArticleDataOut(isRefreshAll) {
-      this.confirmLoading2 = true
+      this.confirmLoading2 = true;
       var postData = {
-       
         pageNo: this.currentPage,
         pageSize: 15,
-      }
+      };
       getRecordListGroupBy(postData)
         .then((res) => {
           if (res.code == 0 && res.data.records.length > 0) {
-            this.showPagination = true
+            this.showPagination = true;
             if (this.queryParam.templateId) {
               res.data.records.forEach((item) => {
-                item.checked = item.template_id == this.queryParam.templateId
-              })
+                item.checked = item.template_id == this.queryParam.templateId;
+              });
             } else {
               // res.data.records[0].checked = true
               // this.queryParam.templateId = res.data.records[0].template_id
               // this.queryParam.templateName = res.data.records[0].template_title
-              this.queryParam.templateId = undefined
-              this.queryParam.templateName = undefined
+              this.queryParam.templateId = undefined;
+              this.queryParam.templateName = undefined;
               this.articleList.forEach((item) => {
-                this.$set(item, 'isChecked', false)
-              })
+                this.$set(item, "isChecked", false);
+              });
             }
 
-            this.articleList = res.data.records
-            this.articleListTemp = res.data.records
-            this.totalPage = res.data.total
-            this.currentPage = res.data.current
+            this.articleList = res.data.records;
+            this.articleListTemp = res.data.records;
+            this.totalPage = res.data.total;
+            this.currentPage = res.data.current;
 
             if (isRefreshAll) {
-              this.$refs.table.refresh()
+              this.$refs.table.refresh();
             }
           } else {
-            this.showPagination = false
-            this.queryParam.templateId = undefined
-            this.queryParam.templateName = undefined
-            this.articleList = []
-            this.articleListTemp = []
+            this.showPagination = false;
+            this.queryParam.templateId = undefined;
+            this.queryParam.templateName = undefined;
+            this.articleList = [];
+            this.articleListTemp = [];
             if (isRefreshAll) {
-              this.$refs.table.refresh()
+              this.$refs.table.refresh();
             }
           }
         })
         .finally(() => {
-          this.confirmLoading2 = false
-        })
+          this.confirmLoading2 = false;
+        });
     },
+
+    //获取管理的科室 可首拼
+    getAutoSelectList(templateName) {
+      this.fetching = true;
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getRecordListGroupBy({ templateName: templateName, pageNo: 1, pageSize: 15 }).then(
+        (res) => {
+          console.log("ddd--------------auto", res);
+          this.fetching = false;
+          if (res.code == 0) {
+            this.autoTemData = res.data.records;
+          }
+        }
+      );
+    },
+    //科室搜索
+    handleSearchAuto(value) {
+      this.autoTemData = [];
+      console.log("handleSearchAuto", value);
+      this.getAutoSelectList(value);
+    },
+    //科室选择变化
+    handleChangeAuto(value) {
+      debugger;
+      console.log("handleChangeAuto", value);
+      if (value === undefined) {
+        this.autoTemData = [];
+        this.getAutoSelectList(undefined);
+      }
+      // let data = this.autoTemData.find((item) => {
+      //   item.template_id == value;
+      // });
+      let data = this.autoTemData.find((item) => item.template_id == value);
+
+      console.log("handleChangeAuto------------data", data);
+      this.handleChange(value, data.templateType);
+      // this.$refs.table.refresh(true);
+    },
+
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
-      this.fetching = true
+      this.fetching = true;
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
-        this.fetching = false
+      getDepartmentListForSelect(departmentName, "managerDept").then((res) => {
+        this.fetching = false;
         if (res.code == 0) {
-          this.originData = res.data.records
+          this.originData = res.data.records;
         }
-      })
+      });
     },
     //科室搜索
     onDepartmentSelectSearch(value) {
-      this.originData = []
-      this.getDepartmentSelectList(value)
+      this.originData = [];
+      this.getDepartmentSelectList(value);
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
-      console.log('onDepartmentSelectChange', value)
+      console.log("onDepartmentSelectChange", value);
       if (value === undefined) {
-        this.originData = []
-        this.getDepartmentSelectList(undefined)
+        this.originData = [];
+        this.getDepartmentSelectList(undefined);
       }
       // this.$refs.table.refresh(true)
     },
@@ -414,46 +524,49 @@ export default {
     handlePlanSearch(inputName) {},
 
     handleSearch(inputName) {
-      this.articleListTemp = this.articleList
+      this.articleListTemp = this.articleList;
     },
     handleChange(value, templateType) {
-      console.log('handleChange', value)
-     
+      console.log("handleChange", value);
+
       if (value) {
-        this.queryParam.templateId = value
+        this.queryParam.templateId = value;
         this.articleList.forEach((item) => {
-          this.$set(item, 'isChecked', false)
-          if (item.template_id == this.queryParam.templateId && item.templateType == templateType) {
-            this.queryParam.templateName = item.template_title
-            this.$set(item, 'isChecked', true)
+          this.$set(item, "isChecked", false);
+          if (
+            item.template_id == this.queryParam.templateId &&
+            item.templateType == templateType
+          ) {
+            this.queryParam.templateName = item.template_title;
+            this.$set(item, "isChecked", true);
           }
-        })
+        });
       } else {
-        this.queryParam.templateId = undefined
-        this.queryParam.templateName = undefined
+        this.queryParam.templateId = undefined;
+        this.queryParam.templateName = undefined;
         this.articleList.forEach((item) => {
-          this.$set(item, 'isChecked', false)
-        })
+          this.$set(item, "isChecked", false);
+        });
       }
 
       // if (!this.queryParam.templateId) {
       //   this.queryParam.templateId = this.articleList[0].template_id
       //   this.queryParam.templateName = this.articleList[0].template_title
       // }
-      console.log(this.queryParam.templateId + '====' + this.queryParam.templateName)
-      this.articleListTemp = this.articleList
-      this.$refs.table.refresh()
+      console.log(this.queryParam.templateId + "====" + this.queryParam.templateName);
+      this.articleListTemp = this.articleList;
+      this.$refs.table.refresh();
     },
 
     onChange(momentArr, dateArr) {
-      this.createValue = momentArr
-      this.queryParam.sendStartTime = dateArr[0]
-      this.queryParam.sendEndTime = dateArr[1]
+      this.createValue = momentArr;
+      this.queryParam.sendStartTime = dateArr[0];
+      this.queryParam.sendEndTime = dateArr[1];
     },
 
     //重新发送
     send(record) {
-      this.$message.success('该功能待开发')
+      this.$message.success("该功能待开发");
       // this.confirmLoading = true
       // modifyArticle({ id: record.articleId, status: '2' }).then((res) => {
       //   this.confirmLoading = false
@@ -467,10 +580,10 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh()
+      this.$refs.table.refresh();
     },
   },
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -497,10 +610,14 @@ export default {
     margin-right: 20px;
     // height: calc(100vh - 170px);
     // height: 510px;
-    min-height: 300px;
+    overflow-y: auto;
+    height: 81.7vh;
     flex-shrink: 0;
     width: 270px;
     overflow: hidden;
+    border: 1px solid #e6e6e6;
+    box-sizing: border-box;
+    padding: 20px 10px 20px 20px;
 
     .top-kuang {
       display: flex;
@@ -555,8 +672,8 @@ export default {
       // height: 10%;
       overflow-y: auto;
       padding: 10px;
-      height: 530px;
-      width: 260px;
+      // height: 530px;
+      // width: 260px;
       .checked {
         color: #1890ff !important;
         // border: 1px solid #1890ff !important;
@@ -564,21 +681,10 @@ export default {
       }
 
       .div-part {
-        // padding: 8px;
-        // background: rgba(0, 1, 3, 0);
-        // border: 1px solid #dfe3e5;
-        // overflow: hidden;
-        // width: 95%;
-        // display: flex;
-        // flex-direction: column;
-        // margin-bottom: 8px;
-        // // padding-left: 5%;
-        // border-bottom: #e6e6e6 1px solid;
-
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        height: 40px;
+        // height: 40px;
         font-size: 12px;
         align-items: center;
 
@@ -590,7 +696,7 @@ export default {
           width: 100%;
           height: 0.5px;
           background: #e6e6e6;
-          margin-top: 5px;
+          margin-top: 10px;
           margin-bottom: 5px;
           margin-right: 10%;
         }
@@ -607,9 +713,9 @@ export default {
 
           flex: 1;
           height: 85%;
-          overflow: hidden; //溢出隐藏
-          text-overflow: ellipsis; //超出省略号显示
-          white-space: nowrap; //文字不换行
+          // overflow: hidden; //溢出隐藏
+          // text-overflow: ellipsis; //超出省略号显示
+          // white-space: nowrap; //文字不换行
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
@@ -664,7 +770,10 @@ export default {
   }
   .div-service-right-control {
     flex: 1;
-    width: calc(100% - 20px);
+    // width: calc(100% - 20px);
+    box-sizing: border-box;
+    padding: 20px 20px 20px 20px;
+    border: 1px solid #e6e6e6;
   }
 }
 
@@ -732,5 +841,3 @@ button {
   color: #000;
 }
 </style>
-
-
