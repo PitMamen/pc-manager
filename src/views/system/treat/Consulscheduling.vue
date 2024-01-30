@@ -296,24 +296,25 @@
         </div>
       </span>
 
-      <!-- 康复随访 -->
-      <span slot="twzxaction" slot-scope="text, record">
+      <!-- 康复随访  开关不让点击-->
+      <span slot="kfsfaction" slot-scope="text, record">
         <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap">
           <a-popconfirm
-            v-if="record.tuwen"
-            :title="record.tuwen && record.tuwen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
+           :disabled="true"
+            v-if="record.kangfu"
+            :title="record.kangfu && record.kangfu.stopStatus == 2 ? '确认停用？' : '确认启用？'"
             placement="topRight"
             @confirm="updatePkgStatusOut(record, 'kfsf')"
           >
             <a-switch
-              v-if="record.tuwen"
-              :disabled="!record.tuwen"
+              v-if="record.kangfu"
+              :disabled="!record.kangfu"
               size="small"
-              :checked="record.tuwen ? record.tuwen.stopStatus == 2 : false"
+              :checked="record.kangfu ? record.kangfu.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
-          <div v-if="!record.tuwen" class="tuoyuan" @click="showMessage(record, 2)">
+          <div v-if="!record.kangfu" class="tuoyuan">
             <div class="yuan"></div>
           </div>
 
@@ -322,8 +323,8 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.tuwen" @click="showMessage(record, 2)" style="margin-left: 5px; color: #4d4d4d">配置</a>
-          <a v-if="record.tuwen" style="margin-left: 5px" @click="$refs.kfsfConfig.kfsfmodal(record)">配置</a>
+          <a v-if="!record.kangfu"  style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="record.kangfu" style="margin-left: 5px" @click="$refs.kfsfConfig.kfsfmodal(record)">配置</a>
         </div>
       </span>
     </s-table>
@@ -463,8 +464,8 @@ export default {
 
         {
           title: '康复随访',
-          dataIndex: 'twzxaction',
-          scopedSlots: { customRender: 'twzxaction' },
+          dataIndex: 'kfsfaction',
+          scopedSlots: { customRender: 'kfsfaction' },
           align: 'center',
         },
       ],
@@ -504,6 +505,9 @@ export default {
                   } else if (item1.arrangeType == 'psychology') {
                     //特需心理咨询
                     this.$set(item, 'texu', item1)
+                  }else if (item1.arrangeType == 120) {
+                    //康复随访
+                    this.$set(item, 'kangfu', item1)
                   }
                 })
               }
@@ -594,11 +598,11 @@ export default {
         record.texu.stopStatus = record.texu.stopStatus == 2 ? 1 : 2
       }else if (type == 'kfsf') {
         data = {
-          id: record.texu.commodityId,
-          statusValue: record.texu.stopStatus == 2 ? 1 : 2,
+          id: record.kangfu.commodityId,
+          statusValue: record.kangfu.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
-        record.texu.stopStatus = record.texu.stopStatus == 2 ? 1 : 2
+        record.kangfu.stopStatus = record.kangfu.stopStatus == 2 ? 1 : 2
       }
 
       updatePkgStatus(data).then((res) => {

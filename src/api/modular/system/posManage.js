@@ -3777,6 +3777,41 @@ export function getCommodityPkgDetailByid(data) {
 }
 
 
+/**
+ * 康复随访 
+ */
+export function mgrDoctorRehabilitationFollows(data) {
+  return axios({
+    url: '/medical-api/pkg/mgrDoctorRehabilitationFollows',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+/**
+ * 删除康复随访计划  
+ */
+export function deleteRehabilitationFollowCommodity(data) {
+  return axios({
+    url: '/medical-api/pkg/deleteRehabilitationFollowCommodity',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 修改康复随访 
+ */
+export function mgrSaveDoctorRehabilitationFollows(data) {
+  return axios({
+    url: '/medical-api/pkg/mgrSaveDoctorRehabilitationFollows', 
+    method: 'post',
+    data: data,
+  })
+}
+
+
 
 
 
