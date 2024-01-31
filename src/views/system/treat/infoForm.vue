@@ -640,7 +640,7 @@
                         <div class="docpoint"></div>
                         <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
                           实际拨打时间:{{
-                            voiceListData && voiceListData.length > 0 ? voiceListData[0].callTime : '-' || '-'
+                            videoListData && videoListData.length > 0 ? videoListData[0].callTime : '-' || '-'
                           }}
                         </div>
                       </div>
@@ -649,7 +649,7 @@
                         <div class="docpoint"></div>
                         <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
                           结 &nbsp;束 &nbsp;时 &nbsp; 间:{{
-                            voiceListData && voiceListData.length > 0 ? voiceListData[0].endTime : '-' || '-'
+                            videoListData && videoListData.length > 0 ? videoListData[0].endTime : '-' || '-'
                           }}
                         </div>
                       </div>
