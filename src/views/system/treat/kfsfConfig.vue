@@ -188,7 +188,7 @@ export default {
     },
 
     deleteTask(item, index) {
-      console.log('CCCC:', item)
+      // console.log('CCCC:', item)
       if (this.taskList.length == 1) {
         this.$message.error('至少配置一项!')
         return
@@ -243,7 +243,7 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
-            this.taskList.splice(index, index)
+            this.taskList.splice(index, 1)
             this.$message.success('刪除成功')
           }
         })
@@ -268,7 +268,7 @@ export default {
       this.clearData()
       this.visible = true
       this.record = record
-      console.log('1111:', record)
+      // console.log('1111:', record)
       this.qryFollowPlanByFollowTypeOut(undefined)
       this.getDetailData1()
     },
@@ -282,13 +282,11 @@ export default {
               this.achievementRatio = res.data.achievementRatio
               if (res.data.items && res.data.items.length > 0) {
                 this.taskList = res.data.items
-                if (this.taskList && this.taskList.length > 0) {
                   this.taskList.forEach((item) => {
                     this.$set(item, 'expireValue', item.expireValue + '天')
                     this.$set(item, 'textCount', item.textCount || '')
                     // this.$set(item, 'isLimit', false)
                   })
-                }
               } else {
                 this.addTask()
               }

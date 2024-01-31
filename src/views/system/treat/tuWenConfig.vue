@@ -256,7 +256,7 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
-            this.taskList.splice(index, index)
+            this.taskList.splice(index, 1)
             this.$message.success('刪除成功')
           }
         })
