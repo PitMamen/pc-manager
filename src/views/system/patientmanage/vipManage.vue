@@ -1,14 +1,10 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
     <a-tabs v-model="keyindex" @change="chanage" style="margin-top: -20px">
-      <a-tab-pane
-        class="ant-tabs-tab-active"
-        v-for="(itemTab, indexTab) in tabDatas"
-        :key="itemTab.id"
-      >
+      <a-tab-pane class="ant-tabs-tab-active" v-for="(itemTab, indexTab) in tabDatas" :key="itemTab.id">
         <span slot="tab">
           <a-icon :type="getType(indexTab)" />
-          <span>{{itemTab.metaName}}</span>
+          <span>{{ itemTab.metaName }}</span>
         </span>
       </a-tab-pane>
     </a-tabs>
@@ -85,7 +81,7 @@
         </span>
       </div>
 
-      <div class="action-row" style="display: inline-flex; flex-direction: row;  margin-left: auto">
+      <div class="action-row" style="display: inline-flex; flex-direction: row; margin-left: auto">
         <a-upload
           :action="actionUrl"
           :multiple="false"
@@ -96,7 +92,7 @@
           accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           @change="uploadModal"
         >
-          <div style="margin-right: 8px;margin-left: 50px;" v-if="fileList.length < 1">
+          <div style="margin-right: 8px; margin-left: 50px" v-if="fileList.length < 1">
             <a-button type="primary">
               <a-icon type="upload" />
               上传
@@ -108,7 +104,7 @@
     </div>
     <!-- :scroll="{ x: true }" -->
     <s-table
-    :scroll="{ x: true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="tableClumns"
@@ -288,7 +284,12 @@ export default {
             }
           }
         }
-        let param = { name: this.name, depts: this.depts, tableName: this.tableName,followMetaConfigureId:this.tableId }
+        let param = {
+          name: this.name,
+          depts: this.depts,
+          tableName: this.tableName,
+          followMetaConfigureId: this.tableId,
+        }
         for (let index = 0; index < this.chooseArr.length; index++) {
           if (this.chooseArr[index].type == 1 || this.chooseArr[index].type == 3) {
             this.$set(param, this.chooseArr[index].tableField, this.chooseArr[index].tempValue)
@@ -355,6 +356,7 @@ export default {
      */
     var requestDataCon = {
       qryFlag: 1,
+      status: 1,
     }
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
 
@@ -423,30 +425,21 @@ export default {
       document.body.removeChild(el)
     },
 
-
-
-
-    getType(index){
-      if (index==0) {
+    getType(index) {
+      if (index == 0) {
         return 'exception'
-      }else if (index==1) {
+      } else if (index == 1) {
         return 'file-search'
-      }else if (index==2) {
+      } else if (index == 2) {
         return 'solution'
-      }else if (index==3) {
+      } else if (index == 3) {
         return 'user'
-      }else if (index==4) {
+      } else if (index == 4) {
         return 'tream'
-      }else{
+      } else {
         return 'hourglass'
-
       }
     },
-
-
-
-
-
 
     //上传
     uploadModal(changeObj) {
@@ -572,7 +565,7 @@ export default {
                           return {
                             style: {
                               overflow: 'hidden',
-              
+
                               whiteSpace: 'nowrop',
                               textOverflow: 'ellipsis',
                             },
@@ -582,8 +575,7 @@ export default {
                       continue
                     }
 
-
-                    if (detailData[index].tableField=='cyzdmc') {
+                    if (detailData[index].tableField == 'cyzdmc') {
                       // console.log("!!!!!!!!!!!!!!!!!!")
                       this.tableClumns.push({
                         title: detailData[index].fieldComment,
@@ -608,15 +600,15 @@ export default {
                       dataIndex: detailData[index].tableField,
 
                       onCell: () => {
-                          return {
-                            style: {
-                              overflow: 'hidden',
-                              width: 280,
-                              textOverflow: 'ellipsis',
-                              whiteSpace:'nowwrp'
-                            },
-                          }
-                        },
+                        return {
+                          style: {
+                            overflow: 'hidden',
+                            width: 280,
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowwrp',
+                          },
+                        }
+                      },
                     })
                   }
                 }

@@ -866,7 +866,6 @@ export default {
         this.projectData.basePlan.executeDepartments = newArr
         console.log('this.projectData.basePlan.executeDepartments', this.projectData.basePlan.executeDepartments)
       }
-
       if (this.projectData.filterRules && this.projectData.filterRules.length > 0) {
         this.projectData.filterRules.forEach((item) => {
           item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
@@ -1424,7 +1423,7 @@ export default {
           console.log('getSourceData scene', scene)
           if (scene == 1) {
             console.log('getSourceData metaConfigureId', this.sourceData[0].value)
-            // this.projectData.basePlan.metaConfigureId = this.sourceData[0].value  //这里为啥 要重新赋值？？
+            // this.projectData.basePlan.metaConfigureId = this.sourceData[0].value  // 日期类型  这里为啥 要重新赋值？？
             this.dateFieldsOut()
           }
         }
@@ -1606,15 +1605,6 @@ export default {
       })
     },
 
-    // dateFieldsOut() {
-    //   dateFields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then(
-    //     (res) => {
-    //       if (res.code == 0) {
-    //         this.dateFieldsData = res.data;
-    //       }
-    //     }
-    //   );
-    // },
 
     dateFieldsOut() {
       // dateFields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then(
@@ -1628,8 +1618,8 @@ export default {
                 item.messageType = this.msgData[0].value
                 item.messageContentId = undefined
               }
-              item.taskExecType = this.taskExecData[0].value
-              item.metaConfigureDetailId = this.dateFieldsData[0].value
+              // item.taskExecType = this.taskExecData[0].value  //  执行周期(临时执行 长期执行) 这里为啥 要重新赋值
+              // item.metaConfigureDetailId = this.dateFieldsData[0].value  // 日期类别 这里为啥 要重新赋值
             })
           }
         }
