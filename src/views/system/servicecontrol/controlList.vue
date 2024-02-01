@@ -21,9 +21,9 @@
           />
 
           <div class="title-kuang">
-            <div>问卷名称</div>
-            <div style="margin-left: 90px">抽查率</div>
-            <div>合格率</div>
+            <div style="width:70px;flex: 1">问卷名称</div>
+            <div style="margin-left: 90px; width:50px">抽查率</div>
+            <div style="width:50px;padding-left:10px">合格率</div>
           </div>
           <div class="div-wrap-control">
             <div v-if="quesDataTemp && quesDataTemp.length > 0">
@@ -39,10 +39,10 @@
                   <div style="width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
                     {{ item.questionnaireName }}
                   </div>
-                  <span>
+                  <span style="margin-right:10px">
                     {{ item.checkPercentage }}
                   </span>
-                  <span style="margin-left: 5px; margin-right: 10px">
+                  <span style="margin-left: 5px; margin-right: 15px">
                     {{ item.passCheckPercentage }}
                   </span>
                 </div>
@@ -151,7 +151,7 @@
               </div>
 
               <div class="search-row" v-if="queryParams.type == 2">
-                <span class="name">抽查日期:</span>
+                <span class="name">抽查时间:</span>
                 <a-range-picker style="width: 185px" :value="createValueCheck" @change="onChangeCheck" />
               </div>
 
@@ -1186,12 +1186,13 @@ export default {
   height: calc(100vh - 90px);
 
   .left-control {
-    width: 20%;
+    width: 310px;
     margin-top: 20px;
     margin-left: 10px;
     display: flex;
     flex-direction: column;
     height: 100%;
+    flex-shrink: 0;
 
     .top-kuang {
       display: flex;

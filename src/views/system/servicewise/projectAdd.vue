@@ -250,7 +250,7 @@
           :key="indexTask"
           :value="itemTask.taskId"
         >
-          <div class="mission-top-add" v-if="!isMenzhen">
+          <div class="mission-top-add" v-if="!isMenzhen || menZhenMingdan != 21">
             <div class="btn-top" @click="addStop(indexTask)">
               <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_stop_d.png" /><span
                 style="color: white; margin-left: 10px"
@@ -333,7 +333,7 @@
               class="mid-select-two"
               v-model="itemTask.taskExecType"
               @select="onSelectExecType"
-              :disabled="isMenzhen"
+              :disabled="isMenzhen&& menZhenMingdan == 21"
               allow-clear
               placeholder="请选择执行周期"
             >
@@ -342,13 +342,14 @@
               }}</a-select-option>
             </a-select>
 
+            <!-- 只有门诊病人和 门诊名单 不让选 其他都可选 -->
             <a-select
               class="mid-select-two"
               @focus="getFocus"
               style="width: 100px !important"
               v-model="itemTask.metaConfigureDetailId"
               allow-clear
-              :disabled="isMenzhen"
+              :disabled="isMenzhen && menZhenMingdan == 21"
               placeholder="日期类别"
             >
               <a-select-option v-for="(item, index) in dateFieldsData" :key="index" :value="item.value">{{

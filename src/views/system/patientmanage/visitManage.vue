@@ -229,6 +229,7 @@ export default {
 
       queryParamsRecord: {
         userId: '',
+        followMetaConfigureId:'',
       },
 
       visitTypeList: [
@@ -266,6 +267,7 @@ export default {
       this.queryParams.followMetaDataId = record.id
       this.queryParams.followMetaConfigureId = record.followMetaConfigureId
       this.queryParamsRecord.userId = record.userId
+      this.queryParamsRecord.followMetaConfigureId = record.followMetaConfigureId
       this.qryExecuteRecordByUserIdOut()
       this.getmessageTypes()
       this.getSmsTemplateListForJumpTypeOut()

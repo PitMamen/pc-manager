@@ -288,7 +288,7 @@ export default {
             }
           }
         }
-        let param = { name: this.name, depts: this.depts, tableName: this.tableName }
+        let param = { name: this.name, depts: this.depts, tableName: this.tableName,followMetaConfigureId:this.tableId }
         for (let index = 0; index < this.chooseArr.length; index++) {
           if (this.chooseArr[index].type == 1 || this.chooseArr[index].type == 3) {
             this.$set(param, this.chooseArr[index].tableField, this.chooseArr[index].tempValue)

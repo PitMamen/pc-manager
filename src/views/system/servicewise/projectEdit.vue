@@ -230,7 +230,7 @@
           :key="indexTask"
           :value="itemTask.taskId"
         >
-          <div class="mission-top-add" v-if="!isMenzhen">
+          <div class="mission-top-add" v-if="!isMenzhen||projectData.basePlan.metaConfigureId != 21">
             <div class="btn-top" @click="addStop(indexTask)">
               <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_stop_d.png" /><span
                 style="color: white; margin-left: 10px"
@@ -312,7 +312,7 @@
               v-model="itemTask.taskExecType"
               allow-clear
               @select="onSelectExecType"
-              :disabled="isMenzhen"
+              :disabled="isMenzhen&&projectData.basePlan.metaConfigureId == 21"
               placeholder="请选择执行周期"
             >
               <a-select-option v-for="(item, index) in taskExecData" :key="index" :value="item.value">{{
@@ -326,7 +326,7 @@
               v-model="itemTask.metaConfigureDetailId"
               style="width: 100px !important"
               allow-clear
-              :disabled="isMenzhen"
+              :disabled="isMenzhen&&projectData.basePlan.metaConfigureId == 21"
               placeholder="日期类别"
             >
               <a-select-option v-for="(item, index) in dateFieldsData" :key="index" :value="item.value">{{
@@ -1424,7 +1424,7 @@ export default {
           console.log('getSourceData scene', scene)
           if (scene == 1) {
             console.log('getSourceData metaConfigureId', this.sourceData[0].value)
-            this.projectData.basePlan.metaConfigureId = this.sourceData[0].value
+            // this.projectData.basePlan.metaConfigureId = this.sourceData[0].value  //这里为啥 要重新赋值？？
             this.dateFieldsOut()
           }
         }
